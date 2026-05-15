@@ -1529,6 +1529,7 @@ function renderPCQueila(){
   btnDiv.innerHTML=`<button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="gerarRelQueila('completo')">📄 Relatório Completo</button>
     <button class="btn btn-ghost-dark" style="width:100%;justify-content:center;" onclick="gerarRelQueila('simples')">📋 Relatório Simplificado</button>`;
   document.getElementById('pc-conteudo').appendChild(btnDiv);
+}
 
 function sec(id,icon,title,sub,body){
   return`<div class="pc-sec"><div class="pc-sec-head" onclick="toggleSec('${id}')"><span class="psh-icon">${icon}</span><h3>${title}</h3><span class="psh-sub">${sub}</span><span class="chev open" id="chev-${id}">▾</span></div><div class="pc-sec-body" id="pcs-${id}">${body}</div></div>`;
