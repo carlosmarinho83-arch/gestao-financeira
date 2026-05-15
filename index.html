@@ -160,6 +160,8 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 .btn-primary { background:var(--green-acc); color:var(--teal-dark); box-shadow:0 2px 12px rgba(105,240,174,.35); }
 .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(105,240,174,.5); }
 .btn-ghost { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.2); }
+.modal .btn-ghost { background:var(--surface2); color:var(--ink2); border:1px solid var(--border); }
+.modal .btn-ghost:hover { background:var(--surface3); }
 .btn-ghost-dark { background:var(--surface2); color:var(--ink2); border:1px solid var(--border); }
 .btn-ghost:hover { background:rgba(255,255,255,.25); }
 .btn-danger { background:rgba(239,83,80,.1); color:var(--red); border:1px solid rgba(239,83,80,.25); }
@@ -317,7 +319,7 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 
 /* Cartões e Pessoas grids */
 .cc-grid, #cartoes-grid, #pessoas-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
-.cc-card, .pessoa-card { background:var(--surface); border-radius:14px; padding:16px; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
+.cc-card, .pessoa-card, .cartao-card { background:var(--surface); border-radius:14px; padding:12px 14px; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
 .cc-nome, .pc-nome { font-weight:800; font-size:.9rem; margin-bottom:4px; display:flex; align-items:center; gap:8px; }
 .cc-tipo, .pc-tipo { font-size:.72rem; color:var(--ink3); font-weight:600; margin-bottom:12px; }
 .cc-actions { display:flex; gap:6px; }
@@ -346,7 +348,7 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 body.mobile-mode .sidebar { display:none!important; }
 body.mobile-mode .main { margin-left:0; }
 body.mobile-mode .topbar { padding:12px 16px; position:fixed; top:0; left:0; right:0; z-index:100; }
-body.mobile-mode .btn-primary { display:none; }
+body.mobile-mode .topbar .btn-primary { display:none; }
 body.mobile-mode .content { padding:12px 12px 80px; margin-top:52px; }
 body.mobile-mode .stats-fileira { grid-template-columns:repeat(2,1fr)!important; }
 body.mobile-mode .stat-card { padding:12px 14px; }
@@ -663,7 +665,23 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     </div>
     <div class="parc-row" id="parc-row" onclick="event.stopPropagation()">
       <div class="form-group"><label class="form-label">Parcela atual</label><input type="number" class="form-input" id="l-pa" min="1" value="1"></div>
-      <div class="form-group"><label class="form-label">Total de parcelas</label><input type="number" class="form-input" id="l-pt" min="1" value="2"></div>
+      <div class="form-group"><label class="form-label">Total de parcelas</label><input type="number" class="form-input" id="l-pt" min="1" value="2" oninput="calcParcelaAuto()"></div>
+    </div>
+    <!-- Calculadora de parcelas -->
+    <div id="calc-parc-box" style="display:none;background:rgba(0,137,123,.06);border:1px solid rgba(0,137,123,.2);border-radius:10px;padding:12px 14px;margin-top:6px;">
+      <div style="font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--teal);margin-bottom:10px;">🧮 Calculadora de Parcelas</div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+        <div style="flex:1;min-width:100px;">
+          <label class="form-label">Valor total da compra</label>
+          <div class="money-wrap"><span>R$</span><input type="number" id="calc-total" placeholder="0,00" step="0.01" min="0" oninput="calcParcelaAuto()" style="width:100%;"></div>
+        </div>
+        <div style="width:80px;">
+          <label class="form-label">Parcelas</label>
+          <input type="number" class="form-input" id="calc-n" min="1" max="99" placeholder="ex: 12" oninput="calcParcelaAuto()">
+        </div>
+        <button type="button" onclick="aplicarCalcParcela()" class="btn btn-ghost-dark btn-sm" style="height:42px;white-space:nowrap;">✓ Usar</button>
+      </div>
+      <div id="calc-resultado" style="margin-top:8px;font-size:.82rem;color:var(--teal);font-weight:700;"></div>
     </div>
     <div class="form-group">
       <div class="form-check"><input type="checkbox" id="l-recorrente" onchange="toggleRecorrente()"><label for="l-recorrente">Recorrente (repete todo mês automaticamente)</label></div>
@@ -801,6 +819,12 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     <div class="form-group"><label class="form-label">Confirmar senha</label><input type="password" class="form-input" id="conf-senha" placeholder="Repita a senha"></div>
     <div id="senha-cfg-erro" style="color:var(--red);font-size:.8rem;display:none;"></div>
   </div>
+  <div style="padding:0 22px 14px;">
+    <button onclick="cadastrarBiometria()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+      Cadastrar / Atualizar Biometria
+    </button>
+  </div>
   <div class="modal-foot">
     <button class="btn btn-ghost" onclick="cm('modal-config-senha')">Cancelar</button>
     <button class="btn btn-primary" onclick="salvarSenha()">Salvar Senha</button>
@@ -866,7 +890,61 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <!-- container de cards mobile -->
 <div id="mob-cards-global" style="display:none"></div>
 
+
+<!-- ═══════════════════════════════ -->
+<!-- TELA DE BLOQUEIO               -->
+<!-- ═══════════════════════════════ -->
+<div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--teal-dark) 0%,var(--teal) 55%,var(--teal-mid) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+  <!-- Padrão geométrico -->
+  <div style="position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 60px;"></div>
+
+  <!-- Logo -->
+  <div style="width:72px;height:72px;background:var(--green-acc);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:var(--teal-dark);margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.2);">GF</div>
+  <div style="color:#fff;font-size:1.1rem;font-weight:900;letter-spacing:.02em;margin-bottom:4px;">Gestão Financeira</div>
+  <div style="color:rgba(255,255,255,.6);font-size:.75rem;font-weight:600;margin-bottom:40px;">FAMILIAR</div>
+
+  <!-- Campo de senha -->
+  <div style="width:100%;max-width:320px;">
+    <div style="background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <input type="password" id="lock-senha" placeholder="Digite sua senha" autocomplete="current-password"
+        style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;"
+        onkeydown="if(event.key==='Enter')desbloquear()"
+        placeholder="Digite sua senha">
+    </div>
+    <div id="lock-erro" style="display:none;color:#ff6b6b;font-size:.82rem;text-align:center;margin-bottom:12px;font-weight:700;">Senha incorreta</div>
+
+    <!-- Botão desbloquear -->
+    <button onclick="desbloquear()" style="width:100%;background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 16px rgba(105,240,174,.3);">
+      Desbloquear
+    </button>
+
+    <!-- Botão biometria -->
+    <button id="btn-biometria" onclick="desbloquearBiometria()" style="width:100%;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/>
+        <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/>
+        <path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/>
+        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+      </svg>
+      Usar biometria
+    </button>
+
+    <div id="lock-bio-status" style="color:rgba(255,255,255,.6);font-size:.75rem;text-align:center;margin-top:10px;"></div>
+  </div>
+
+  <!-- Nota sem senha -->
+  <div id="lock-no-senha" style="display:none;margin-top:20px;text-align:center;">
+    <div style="color:rgba(255,255,255,.7);font-size:.82rem;margin-bottom:12px;">Nenhuma senha configurada</div>
+    <button onclick="entrarSemSenha()" style="background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:10px;padding:12px 24px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;">
+      Entrar no App
+    </button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="importarDados(this)">
 
 <script>
 // ══════════════════════════════════════════
@@ -1110,6 +1188,36 @@ function toggleRecorrente(){
 function toggleParc(){
   const c=document.getElementById('l-parcelado').checked;
   document.getElementById('parc-row').classList.toggle('show',c);
+  document.getElementById('calc-parc-box').style.display=c?'block':'none';
+  if(!c){
+    document.getElementById('calc-total').value='';
+    document.getElementById('calc-n').value='';
+    document.getElementById('calc-resultado').textContent='';
+  }
+}
+function calcParcelaAuto(){
+  const total=parseFloat(document.getElementById('calc-total').value)||0;
+  const n=parseInt(document.getElementById('calc-n').value)||0;
+  const res=document.getElementById('calc-resultado');
+  if(total>0&&n>0){
+    const parcela=total/n;
+    res.textContent=`${n}x de ${fmt(parcela)} = ${fmt(total)}`;
+    // sincronizar campo de total de parcelas
+    document.getElementById('l-pt').value=n;
+  } else {
+    res.textContent='';
+  }
+}
+function aplicarCalcParcela(){
+  const total=parseFloat(document.getElementById('calc-total').value)||0;
+  const n=parseInt(document.getElementById('calc-n').value)||0;
+  if(!total||!n){toast('Preencha o valor total e quantidade de parcelas','error');return;}
+  const parcela=Math.round(total/n*100)/100;
+  document.getElementById('l-valor').value=parcela.toFixed(2);
+  document.getElementById('l-pt').value=n;
+  document.getElementById('l-pa').value=1;
+  document.getElementById('calc-resultado').textContent=`✓ Aplicado: ${n}x de ${fmt(parcela)}`;
+  toast(`${n}x de ${fmt(parcela)} aplicado ✓`,'success');
 }
 function salvarLanc(){
   const desc=document.getElementById('l-desc').value.trim();
@@ -1297,13 +1405,19 @@ function delCartao(id){
   S.cartoes=S.cartoes.filter(c=>c.id!==id);save();renderCartoes();toast('Removido');
 }
 function renderCartoes(){
-  const tipos={normal:'Normal (crédito/débito)',alimentacao:'Alimentação / Benefício',pix:'💸 Pix/Débito/Dinheiro'};
+  const tipos={normal:'Normal (crédito/débito)',alimentacao:'Alimentação / Benefício',pix:'Pix/Débito/Dinheiro'};
   document.getElementById('cartoes-grid').innerHTML=S.cartoes.map(c=>{
     const dono=getPessoa(c.donoId);
-    return`<div class="cartao-card">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="width:12px;height:12px;border-radius:50%;background:${c.cor};display:inline-block;"></span><div class="cc-nome">${c.nome}</div></div>
-      <div class="cc-tipo">${tipos[c.tipo]||'Normal'} · ${dono?dono.nome:'?'}</div>
-      <div class="cc-actions"><button class="btn btn-ghost btn-sm" onclick="openModalCartao('${c.id}')">✏️ Editar</button><button class="btn btn-danger btn-sm" onclick="delCartao('${c.id}')">🗑</button></div>
+    return`<div class="cartao-card" style="display:flex;align-items:center;gap:12px;">
+      <span style="width:12px;height:12px;border-radius:50%;background:${c.cor};display:inline-block;flex-shrink:0;"></span>
+      <div style="flex:1;min-width:0;">
+        <div class="cc-nome" style="margin-bottom:2px;">${c.nome}</div>
+        <div class="cc-tipo">${tipos[c.tipo]||'Normal'} · ${dono?dono.nome:'?'}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="openModalCartao('${c.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delCartao('${c.id}')">🗑</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1339,10 +1453,16 @@ function renderPessoas(){
   const tipos={carlos:'Eu mesmo',queila:'Queila (regras especiais)',cq:'Família (despesas comuns)',normal:'Normal (cobra 100%)'};
   const pessoasOrd=[...S.pessoas].sort((a,b)=>(a.ordem||999)-(b.ordem||999));
   document.getElementById('pessoas-grid').innerHTML=pessoasOrd.map(p=>`
-    <div class="pessoa-card">
-      <div class="pc-nome"><span class="cor-dot" style="background:${p.cor}"></span>${p.nome}</div>
-      <div class="pc-tipo">${tipos[p.tipo]||'Normal'} ${p.ordem?'· #'+p.ordem:''}</div>
-      <div class="cc-actions"><button class="btn btn-ghost btn-sm" onclick="openModalPessoa('${p.id}')">✏️ Editar</button><button class="btn btn-danger btn-sm" onclick="delPessoa('${p.id}')">🗑</button></div>
+    <div class="pessoa-card" style="display:flex;align-items:center;gap:12px;">
+      <span class="cor-dot" style="background:${p.cor};width:12px;height:12px;border-radius:50%;flex-shrink:0;"></span>
+      <div style="flex:1;min-width:0;">
+        <div class="pc-nome" style="margin-bottom:2px;">${p.nome}</div>
+        <div class="pc-tipo">${tipos[p.tipo]||'Normal'} ${p.ordem?'· #'+p.ordem:''}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="openModalPessoa('${p.id}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delPessoa('${p.id}')">🗑</button>
+      </div>
     </div>`).join('');
 }
 
@@ -1427,38 +1547,52 @@ function renderPCNormal(p){
   }
   html+=`<div class="res-total"><span class="rtl">${p.nome} — total a pagar</span><span class="rtv">${fmt(totalGeral)}</span></div></div>`;
   document.getElementById('pc-conteudo').innerHTML=html;
-  const btnDiv=document.createElement('div');
-  btnDiv.style.cssText='margin-top:12px;';
-  btnDiv.innerHTML=`<button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="gerarRelNormal('${p.id}')">📄 Gerar Relatório</button>`;
-  document.getElementById('pc-conteudo').appendChild(btnDiv);
+  const btnRel=document.createElement('button');
+  btnRel.className='btn btn-ghost-dark';
+  btnRel.style.cssText='width:100%;justify-content:center;margin-top:12px;display:flex;';
+  btnRel.textContent='📄 Gerar Relatório';
+  btnRel.onclick=()=>gerarRelNormal(p.id);
+  document.getElementById('pc-conteudo').appendChild(btnRel);
 }
 
 function tabelaLancs(lancs){
   return tabelaLancs50(lancs,[]);
 }
 
-
 function tabelaLancs50(lancs){
   if(lancs.length===0)return'<p style="color:var(--ink3);font-size:.84rem;">Nenhum lançamento.</p>';
-  return`<table style="width:100%;border-collapse:collapse;">
+  const thStyle='padding:6px 8px;font-family:\'Nunito\',sans-serif;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:2px solid var(--border);white-space:nowrap;';
+  return`<table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+    <colgroup>
+      <col style="width:auto;">
+      <col style="width:80px;">
+      <col style="width:100px;">
+    </colgroup>
     <thead><tr>
-      <th style="text-align:left;padding:7px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);border-bottom:1px solid var(--border);">Descrição</th>
-      <th style="text-align:left;padding:7px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);border-bottom:1px solid var(--border);">Cartão</th>
-      <th style="text-align:right;padding:7px 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);border-bottom:1px solid var(--border);">Valor</th>
+      <th style="${thStyle}text-align:left;">Descrição</th>
+      <th style="${thStyle}text-align:left;">Cartão</th>
+      <th style="${thStyle}text-align:right;">Valor</th>
     </tr></thead>
     <tbody>${lancs.map(l=>{
       const c=getCartao(l.cartaoId);
-      const parc=l.parcelado?` <span style="color:var(--ink3);font-family:'JetBrains Mono',monospace;font-size:.68rem;">(${l.pa}/${l.pt})</span>`:'';
-      const rec=l.recorrente?` <span style="color:var(--purple);font-size:.66rem;">↻</span>`:'';
+      const parc=l.parcelado?` <span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:.66rem;">(${l.pa}/${l.pt})</span>`:'';
+      const rec=l.recorrente?` <span style="color:var(--teal);font-size:.66rem;">↻</span>`:'';
       const is50=isMeia(l.categoria);
       const valorExib=is50?l.valor*0.5:l.valor;
-      const badge=is50?` <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;background:rgba(232,197,71,.15);color:var(--accent);border:1px solid rgba(232,197,71,.3);padding:1px 5px;border-radius:3px;margin-left:4px;">50%</span>`:'';
+      const badge=is50?` <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;background:rgba(232,197,71,.15);color:var(--accent);border:1px solid rgba(232,197,71,.3);padding:1px 5px;border-radius:3px;">50%</span>`:'';
+      const tdStyle='padding:7px 8px;border-bottom:1px solid var(--surface2);vertical-align:top;';
+      // Separar R$ do número para alinhar coluna
+      const [rs,num]=fmt(valorExib).split('\u00a0').length>1?fmt(valorExib).split('\u00a0'):['R$',fmt(valorExib).replace('R$','').trim()];
+      const fmtVal=fmt(valorExib).replace('R$','').trim();
       return`<tr>
-        <td style="padding:7px 0;font-size:.84rem;border-bottom:1px solid var(--surface2);">${l.desc}${parc}${rec}${badge}</td>
-        <td style="padding:7px 0;font-size:.76rem;color:var(--ink3);border-bottom:1px solid var(--surface2);">${c?c.nome:'?'}</td>
-        <td style="padding:7px 0;text-align:right;font-family:'JetBrains Mono',monospace;font-size:.84rem;border-bottom:1px solid var(--surface2);">
-          ${fmt(valorExib)}
-          ${is50?`<div style="font-size:.65rem;color:var(--ink3);">total ${fmt(l.valor)}</div>`:''}
+        <td style="${tdStyle}font-size:.84rem;overflow:hidden;text-overflow:ellipsis;">${l.desc}${parc}${rec}${badge}${is50?`<div style="font-size:.65rem;color:var(--ink3);">total ${fmt(l.valor)}</div>`:''}</td>
+        <td style="${tdStyle}font-size:.76rem;color:var(--ink3);white-space:nowrap;">${c?c.nome:'?'}</td>
+        <td style="${tdStyle}font-family:'JetBrains Mono',monospace;font-size:.84rem;white-space:nowrap;padding-right:4px;">
+          <div style="display:flex;align-items:baseline;gap:2px;">
+            <span style="color:var(--ink3);font-size:.72rem;flex-shrink:0;">R$</span>
+            <span style="flex:1;text-align:right;">${fmtVal}</span>
+          </div>
+          ${is50?`<div style="font-size:.62rem;color:var(--ink3);text-align:right;">total ${fmt(l.valor)}</div>`:''}
         </td>
       </tr>`;
     }).join('')}</tbody>
@@ -1524,11 +1658,19 @@ function renderPCQueila(){
   renderCredPC(totalCQItau, swileCredito);
   calcQueila();
   // Garantir botões sempre visíveis — inserir após calcQueila
-  const btnDiv=document.createElement('div');
-  btnDiv.style.cssText='margin-top:12px;display:flex;flex-direction:column;gap:8px;';
-  btnDiv.innerHTML=`<button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="gerarRelQueila('completo')">📄 Relatório Completo</button>
-    <button class="btn btn-ghost-dark" style="width:100%;justify-content:center;" onclick="gerarRelQueila('simples')">📋 Relatório Simplificado</button>`;
-  document.getElementById('pc-conteudo').appendChild(btnDiv);
+  const btnCompleto=document.createElement('button');
+  btnCompleto.className='btn btn-ghost-dark';
+  btnCompleto.style.cssText='width:100%;justify-content:center;margin-top:12px;display:flex;';
+  btnCompleto.textContent='📄 Relatório Completo';
+  btnCompleto.onclick=()=>gerarRelQueila('completo');
+  document.getElementById('pc-conteudo').appendChild(btnCompleto);
+
+  const btnSimples=document.createElement('button');
+  btnSimples.className='btn btn-ghost-dark';
+  btnSimples.style.cssText='width:100%;justify-content:center;margin-top:8px;display:flex;';
+  btnSimples.textContent='📋 Relatório Simplificado';
+  btnSimples.onclick=()=>gerarRelQueila('simples');
+  document.getElementById('pc-conteudo').appendChild(btnSimples);
 }
 
 function sec(id,icon,title,sub,body){
@@ -2109,6 +2251,9 @@ function executarLimparTudo(){
 // ══════════════════════════════════════════
 function mobFabClick(){
   if(pagina==='metas') openModalMeta();
+  else if(pagina==='cartoes') openModalCartao();
+  else if(pagina==='pessoas') openModalPessoa();
+  else if(pagina==='categorias') openModalCat();
   else openModalLanc();
 }
 function updateMenuMesLabel(){
@@ -2688,6 +2833,150 @@ function atualizarTotalDivisao(){
   const totalGeral=valorPrincipal+totalDiv;
   el.innerHTML=`<span>Principal: <b>${fmt(valorPrincipal)}</b> + Divisões: <b>${fmt(totalDiv)}</b> = </span><span class="${totalGeral>0?'dt-ok':''}"><b>${fmt(totalGeral)}</b> total</span>`;
 }
+
+// ══════════════════════════════════════════
+// BLOQUEIO / DESBLOQUEIO
+// ══════════════════════════════════════════
+let _bioCredential = null;
+
+function mostrarLock(){
+  const lock = document.getElementById('lock-screen');
+  if(!lock) return;
+  lock.style.display = 'flex';
+  document.getElementById('lock-erro').style.display = 'none';
+  document.getElementById('lock-senha').value = '';
+  // verificar se tem senha configurada
+  if(!S.senha){
+    document.getElementById('lock-no-senha').style.display = 'block';
+    document.getElementById('lock-senha').parentElement.style.display = 'none';
+    document.querySelector('[onclick="desbloquear()"]').style.display = 'none';
+    document.getElementById('btn-biometria').style.display = 'none';
+  } else {
+    document.getElementById('lock-no-senha').style.display = 'none';
+    document.getElementById('lock-senha').parentElement.style.display = 'flex';
+    document.querySelector('[onclick="desbloquear()"]').style.display = 'block';
+    // verificar suporte a biometria
+    verificarBiometria();
+    // foco no campo
+    setTimeout(()=>document.getElementById('lock-senha').focus(), 300);
+  }
+}
+
+function fecharLock(){
+  const lock = document.getElementById('lock-screen');
+  if(lock) lock.style.display = 'none';
+}
+
+function desbloquear(){
+  const v = document.getElementById('lock-senha').value;
+  const erro = document.getElementById('lock-erro');
+  if(v === S.senha){
+    erro.style.display = 'none';
+    fecharLock();
+  } else {
+    erro.style.display = 'block';
+    document.getElementById('lock-senha').value = '';
+    document.getElementById('lock-senha').focus();
+    // vibrar no mobile
+    if(navigator.vibrate) navigator.vibrate([100,50,100]);
+  }
+}
+
+function entrarSemSenha(){
+  fecharLock();
+}
+
+async function verificarBiometria(){
+  const btn = document.getElementById('btn-biometria');
+  const status = document.getElementById('lock-bio-status');
+  if(!window.PublicKeyCredential){
+    btn.style.display = 'none';
+    return;
+  }
+  try {
+    const disponivel = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    if(disponivel && S.bioCredentialId){
+      btn.style.display = 'flex';
+      status.textContent = 'Biometria disponível';
+      // tentar automaticamente
+      setTimeout(desbloquearBiometria, 500);
+    } else if(disponivel && !S.bioCredentialId){
+      btn.style.display = 'flex';
+      btn.innerHTML = btn.innerHTML.replace('Usar biometria', 'Cadastrar biometria');
+      btn.onclick = cadastrarBiometria;
+    } else {
+      btn.style.display = 'none';
+    }
+  } catch(e){
+    btn.style.display = 'none';
+  }
+}
+
+async function desbloquearBiometria(){
+  const status = document.getElementById('lock-bio-status');
+  if(!S.bioCredentialId){ cadastrarBiometria(); return; }
+  try {
+    status.textContent = 'Aguardando biometria...';
+    const credId = Uint8Array.from(atob(S.bioCredentialId), c=>c.charCodeAt(0));
+    const assertion = await navigator.credentials.get({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        allowCredentials: [{id: credId, type: 'public-key'}],
+        userVerification: 'required',
+        timeout: 30000
+      }
+    });
+    if(assertion){
+      status.textContent = '✓ Biometria confirmada';
+      setTimeout(fecharLock, 300);
+    }
+  } catch(e){
+    if(e.name === 'NotAllowedError'){
+      status.textContent = 'Biometria cancelada';
+    } else {
+      status.textContent = 'Erro: ' + e.message;
+    }
+  }
+}
+
+async function cadastrarBiometria(){
+  const status = document.getElementById('lock-bio-status');
+  try {
+    status.textContent = 'Cadastrando biometria...';
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        challenge: crypto.getRandomValues(new Uint8Array(32)),
+        rp: { name: 'Gestão Financeira Familiar', id: location.hostname || 'localhost' },
+        user: {
+          id: new TextEncoder().encode('user-gf'),
+          name: 'Carlos',
+          displayName: 'Carlos Marinho'
+        },
+        pubKeyCredParams: [{type: 'public-key', alg: -7}],
+        authenticatorSelection: {
+          authenticatorAttachment: 'platform',
+          userVerification: 'required'
+        },
+        timeout: 30000
+      }
+    });
+    if(cred){
+      // salvar ID da credencial
+      S.bioCredentialId = btoa(String.fromCharCode(...new Uint8Array(cred.rawId)));
+      save();
+      status.textContent = '✓ Biometria cadastrada!';
+      setTimeout(fecharLock, 500);
+    }
+  } catch(e){
+    if(e.name === 'NotAllowedError'){
+      status.textContent = 'Cadastro cancelado';
+    } else {
+      status.textContent = 'Erro: use senha por enquanto';
+      console.warn('Biometria:', e);
+    }
+  }
+}
+
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
@@ -2707,6 +2996,7 @@ loadFromFirebase(()=>{
   applyTema();
   applyFuturos();
   showPage('lancamentos');
+  mostrarLock();
 });
 </script>
 <script>
