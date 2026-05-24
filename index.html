@@ -15,30 +15,31 @@
 <title>Gestão Financeira Familiar</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
 
 :root {
-  --teal-dark:#00695C; --teal:#00897B; --teal-mid:#00A693; --teal-light:#00BFA5;
-  --green-acc:#69F0AE; --bg:#E8F5F3; --surface:#ffffff; --surface2:#F0FAF8;
-  --surface3:#E0F2EE; --border:#B2DFDB; --border2:#80CBC4;
-  --ink:#00352C; --ink2:#00695C; --ink3:#4DB6AC;
-  --accent:var(--teal); --accent2:var(--teal-dark);
-  --red:#EF5350; --green:#43A047; --blue:#1E88E5; --purple:#8E24AA; --orange:#FB8C00;
-  --shadow:0 4px 24px rgba(0,105,92,.15); --shadow-sm:0 2px 8px rgba(0,105,92,.10);
+  /* Verde Profundo Refinado */
+  --teal-dark:#063D30; --teal:#0A5C4A; --teal-mid:#0D7A60; --teal-light:#00C896;
+  --green-acc:#00C896; --bg:#F7F9F8; --surface:#FFFFFF; --surface2:#F0F5F3;
+  --surface3:#E8F0EE; --border:rgba(0,0,0,.07); --border2:rgba(0,0,0,.12);
+  --ink:#0D1F1A; --ink2:#2D4A40; --ink3:#7A9E94;
+  --accent:#0A5C4A; --accent2:#063D30;
+  --red:#E53935; --green:#2E7D32; --blue:#1565C0; --purple:#6A1B9A; --orange:#E65100;
+  --shadow:0 4px 24px rgba(6,61,48,.10); --shadow-sm:0 1px 6px rgba(6,61,48,.07);
 }
 
 /* Tema claro é o padrão — tema escuro via classe */
 body.dark-mode {
-  --bg:#0f1512; --surface:#141f1b; --surface2:#1a2820; --surface3:#1f3028;
-  --border:#1e3530; --border2:#2a4a42;
-  --ink:#e8f5f0; --ink2:#80cbc4; --ink3:#4db6ac;
-  --shadow:0 4px 24px rgba(0,0,0,.4); --shadow-sm:0 2px 8px rgba(0,0,0,.3);
+  --bg:#080F0D; --surface:#0F1A17; --surface2:#152119; --surface3:#1A2920;
+  --border:rgba(255,255,255,.07); --border2:rgba(255,255,255,.12);
+  --ink:#E8F0EE; --ink2:#8FB5AB; --ink3:#4D7A6E;
+  --shadow:0 4px 24px rgba(0,0,0,.5); --shadow-sm:0 1px 6px rgba(0,0,0,.4);
 }
 
 * { box-sizing:border-box; margin:0; padding:0; }
-body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
 
 /* ══ LAYOUT ══ */
 .app { display:flex; min-height:100vh; }
@@ -46,13 +47,13 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 /* ══ SIDEBAR ══ */
 .sidebar {
   width:240px; position:fixed; top:0; left:0; bottom:0;
-  background:linear-gradient(160deg,var(--teal-dark) 0%,var(--teal) 55%,var(--teal-mid) 100%);
+  background:#0A1F1A;
   display:flex; flex-direction:column; overflow:hidden; z-index:200;
+  border-right:1px solid rgba(255,255,255,.04);
 }
 .sidebar::before {
   content:''; position:absolute; inset:0; pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E");
-  background-size:60px 60px;
+  background:radial-gradient(ellipse at top left, rgba(0,200,150,.08) 0%, transparent 60%);
 }
 
 /* Logo */
@@ -79,15 +80,15 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 }
 .mes-bar select {
   flex:1; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2);
-  border-radius:8px; color:#fff; font-family:'Nunito',sans-serif;
+  border-radius:8px; color:#fff; font-family:'Plus Jakarta Sans',sans-serif;
   font-size:.8rem; font-weight:700; padding:7px 10px; outline:none; cursor:pointer;
 }
 .mes-bar select option { background:var(--teal-dark); }
 
 /* Swile */
 .swile-sidebar {
-  margin:10px 12px; background:rgba(105,240,174,.1);
-  border:1px solid rgba(105,240,174,.2); border-radius:10px; padding:9px 12px; position:relative;
+  margin:10px 12px; background:rgba(0,200,150,.08);
+  border:1px solid rgba(0,200,150,.15); border-radius:10px; padding:9px 12px; position:relative;
 }
 .swile-lbl { font-size:.58rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:var(--green-acc); margin-bottom:5px; }
 .swile-input-row {
@@ -97,7 +98,7 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 }
 .swile-input-row span { font-size:.68rem; color:rgba(255,255,255,.4); }
 .swile-input-row input {
-  border:none; background:transparent; font-family:'Nunito',sans-serif;
+  border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif;
   font-size:.9rem; font-weight:800; color:var(--green-acc); width:100%; outline:none;
 }
 
@@ -107,16 +108,16 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
   display:flex; align-items:center; gap:12px;
   width:100%; padding:9px 10px; border:none; background:transparent;
   border-radius:12px; cursor:pointer; margin-bottom:2px;
-  font-family:'Nunito',sans-serif; transition:background .2s; text-align:left;
+  font-family:'Plus Jakarta Sans',sans-serif; transition:background .2s; text-align:left;
 }
 .nav-btn:hover { background:rgba(255,255,255,.1); }
-.nav-btn.active { background:rgba(255,255,255,.18); box-shadow:0 2px 12px rgba(0,0,0,.12); }
+.nav-btn.active { background:rgba(0,200,150,.12); box-shadow:none; border-left:2px solid var(--teal-light); }
 .nav-ic {
   width:40px; height:40px; border-radius:50%; flex-shrink:0;
   background:rgba(255,255,255,.12); border:1.5px solid rgba(255,255,255,.2);
   display:flex; align-items:center; justify-content:center; transition:all .2s;
 }
-.nav-btn.active .nav-ic { background:rgba(255,255,255,.28); border-color:rgba(255,255,255,.5); box-shadow:0 2px 10px rgba(0,0,0,.2); }
+.nav-btn.active .nav-ic { background:rgba(0,200,150,.2); border-color:rgba(0,200,150,.4); }
 .nav-ic svg { width:20px; height:20px; fill:none; stroke:rgba(255,255,255,.85); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
 .nav-btn.active .nav-ic svg { stroke:#fff; }
 .nav-lbl { font-size:.82rem; font-weight:700; color:rgba(255,255,255,.75); white-space:nowrap; }
@@ -128,7 +129,7 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 }
 .btn-virar {
   width:100%; background:rgba(105,240,174,.18); border:1px solid rgba(105,240,174,.3);
-  border-radius:9px; color:var(--green-acc); font-family:'Nunito',sans-serif;
+  border-radius:9px; color:var(--green-acc); font-family:'Plus Jakarta Sans',sans-serif;
   font-size:.78rem; font-weight:800; padding:10px; cursor:pointer; margin-bottom:6px;
   transition:background .2s;
 }
@@ -136,7 +137,7 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 .sb-bot-row { display:flex; gap:5px; margin-bottom:5px; }
 .btn-sb {
   flex:1; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15);
-  border-radius:8px; color:rgba(255,255,255,.75); font-family:'Nunito',sans-serif;
+  border-radius:8px; color:rgba(255,255,255,.75); font-family:'Plus Jakarta Sans',sans-serif;
   font-size:.65rem; font-weight:700; padding:7px 4px; cursor:pointer; text-align:center;
   transition:background .2s;
 }
@@ -148,18 +149,19 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 
 /* Topbar */
 .topbar {
-  background:linear-gradient(135deg,var(--teal-dark),var(--teal));
+  background:#0A1F1A;
   padding:14px 24px; display:flex; align-items:center; justify-content:space-between;
-  position:sticky; top:0; z-index:50; box-shadow:0 2px 16px rgba(0,105,92,.2);
+  position:sticky; top:0; z-index:50;
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
 .page-title { color:#fff; font-size:1rem; font-weight:800; }
 .page-title .mes-label-txt { color:var(--green-acc); }
 .topbar-actions { display:flex; gap:8px; align-items:center; }
 
 /* Botões */
-.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:10px; font-family:'Nunito',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; border:none; transition:all .2s; }
-.btn-primary { background:var(--green-acc); color:var(--teal-dark); box-shadow:0 2px 12px rgba(105,240,174,.35); }
-.btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(105,240,174,.5); }
+.btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; border:none; transition:all .2s; }
+.btn-primary { background:var(--teal); color:#fff; box-shadow:0 2px 12px rgba(10,92,74,.25); }
+.btn-primary:hover { background:var(--teal-mid); transform:translateY(-1px); box-shadow:0 4px 16px rgba(10,92,74,.35); }
 .btn-ghost { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.2); }
 .modal .btn-ghost { background:var(--surface2); color:var(--ink2); border:1px solid var(--border); }
 .modal .btn-ghost:hover { background:var(--surface3); }
@@ -178,13 +180,14 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 .stats-row { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
 .stats-fileira { display:grid; gap:10px; }
 .stat-card {
-  background:var(--surface); border-radius:14px; padding:14px 16px;
-  box-shadow:var(--shadow-sm); border:1px solid var(--border); border-top:3px solid var(--teal);
-  transition:transform .2s, box-shadow .2s;
+  background:var(--surface); border-radius:12px; padding:14px 16px;
+  box-shadow:var(--shadow-sm); border:1px solid var(--border);
+  border-top:2.5px solid var(--teal);
+  transition:transform .15s, box-shadow .15s;
 }
-.stat-card:hover { transform:translateY(-2px); box-shadow:var(--shadow); }
-.stat-lbl { font-size:.58rem; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--ink3); margin-bottom:6px; }
-.stat-val { font-size:.95rem; font-weight:800; color:var(--ink); }
+.stat-card:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
+.stat-lbl { font-size:.58rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--ink3); margin-bottom:5px; }
+.stat-val { font-size:.92rem; font-weight:700; color:var(--ink); font-variant-numeric:tabular-nums; }
 .stat-val.accent { color:var(--teal); font-size:1.05rem; }
 .stat-val.green { color:#00897B; }
 .sc-y { border-top-color:var(--teal); }
@@ -202,14 +205,14 @@ body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--ink); 
 }
 .mob-filter-grid { display:contents; }
 .search-wrap { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:8px 14px; }
-.search-wrap input { border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:.88rem; color:var(--ink); outline:none; width:100%; }
-input#busca { border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:.88rem; color:var(--ink); outline:none; width:100%; }
-.filter-sel { background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Nunito',sans-serif; font-size:.78rem; font-weight:600; padding:8px 10px; outline:none; cursor:pointer; }
+.search-wrap input { border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif; font-size:.88rem; color:var(--ink); outline:none; width:100%; }
+input#busca { border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif; font-size:.88rem; color:var(--ink); outline:none; width:100%; }
+.filter-sel { background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; font-size:.78rem; font-weight:600; padding:8px 10px; outline:none; cursor:pointer; }
 
 /* Tabela */
 .table-wrap { background:var(--surface); border-radius:16px; box-shadow:var(--shadow-sm); border:1px solid var(--border); overflow:hidden; }
 table { width:100%; border-collapse:collapse; }
-thead th { background:linear-gradient(135deg,var(--teal-dark),var(--teal)); color:rgba(255,255,255,.9); font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; padding:12px 16px; text-align:left; }
+thead th { background:var(--teal-dark); color:rgba(255,255,255,.9); font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; padding:12px 16px; text-align:left; }
 tbody tr { border-bottom:1px solid var(--border); transition:background .15s; }
 tbody tr:last-child { border-bottom:none; }
 tbody tr:hover { background:var(--surface2); }
@@ -237,16 +240,16 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 /* Modais */
 .overlay { position:fixed; inset:0; background:rgba(0,41,33,.6); z-index:1000; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; padding:20px; }
 .overlay.show { opacity:1; pointer-events:all; }
-.modal { background:var(--surface); border-radius:18px; width:100%; max-width:560px; box-shadow:0 8px 48px rgba(0,105,92,.25); max-height:90vh; overflow-y:auto; }
+.modal { background:var(--surface); border-radius:16px; width:100%; max-width:560px; box-shadow:0 8px 48px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.06); max-height:90vh; overflow-y:auto; }
 .modal-head { display:flex; align-items:center; justify-content:space-between; padding:18px 22px 14px; border-bottom:1px solid var(--border); }
 .modal-head h2 { font-size:1rem; font-weight:800; color:var(--ink); }
 .modal-body { padding:20px 22px; }
 .modal-foot { display:flex; justify-content:flex-end; gap:10px; padding:14px 22px 18px; border-top:1px solid var(--border); }
 .form-group { margin-bottom:14px; }
 .form-label { display:block; font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.07em; color:var(--ink3); margin-bottom:6px; }
-.form-input { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:600; padding:10px 14px; outline:none; transition:border-color .2s; }
-.form-input:focus { border-color:var(--teal); }
-.form-select { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:600; padding:10px 14px; outline:none; transition:border-color .2s; }
+.form-input { width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:500; padding:10px 14px; outline:none; transition:border-color .2s,background .2s; }
+.form-input:focus { border-color:var(--teal); background:var(--surface); box-shadow:0 0 0 3px rgba(10,92,74,.08); }
+.form-select { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:600; padding:10px 14px; outline:none; transition:border-color .2s; }
 .form-select:focus { border-color:var(--teal); }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .form-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
@@ -255,14 +258,14 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 .form-check label { font-size:.84rem; font-weight:600; cursor:pointer; }
 .money-wrap { display:flex; align-items:center; gap:0; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; overflow:hidden; }
 .money-wrap span { padding:10px 10px 10px 14px; font-size:.78rem; font-weight:700; color:var(--ink3); white-space:nowrap; }
-.money-wrap input { border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; flex:1; padding:10px 14px 10px 0; }
+.money-wrap input { border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; flex:1; padding:10px 14px 10px 0; }
 .money-wrap:focus-within { border-color:var(--teal); }
 .perc-wrap { display:flex; align-items:center; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; overflow:hidden; }
-.perc-wrap input { border:none; background:transparent; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:10px 6px 10px 14px; width:60px; }
+.perc-wrap input { border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:10px 6px 10px 14px; width:60px; }
 .perc-wrap span { padding:10px 14px 10px 4px; font-size:.78rem; color:var(--ink3); }
 .info-tip { background:rgba(0,137,123,.08); border:1px solid rgba(0,137,123,.2); border-radius:8px; padding:8px 12px; font-size:.78rem; color:var(--ink2); margin-bottom:12px; }
 .parc-row { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--surface2); border-radius:10px; border:1px solid var(--border); }
-.parc-row input { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; font-family:'Nunito',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:6px 10px; width:64px; text-align:center; }
+.parc-row input { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:6px 10px; width:64px; text-align:center; }
 .parc-row input:focus { border-color:var(--teal); }
 .parc-row span { color:var(--ink3); font-size:.84rem; }
 
@@ -283,12 +286,12 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 
 /* Pessoas chips */
 .pessoas-chips { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
-.pessoa-chip { padding:7px 16px; border-radius:20px; background:var(--surface); border:2px solid var(--border); font-family:'Nunito',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink2); transition:all .2s; }
+.pessoa-chip { padding:7px 16px; border-radius:20px; background:var(--surface); border:2px solid var(--border); font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink2); transition:all .2s; }
 .pessoa-chip:hover { border-color:var(--teal); color:var(--teal); }
 .pessoa-chip.active { border-color:var(--teal); background:var(--teal); color:#fff; }
 
 /* Res card */
-.res-card { background:linear-gradient(135deg,var(--teal-dark),var(--teal)); border-radius:14px; padding:18px; color:#fff; margin-top:14px; }
+.res-card { background:var(--teal-dark); border-radius:14px; padding:18px; color:#fff; margin-top:14px; }
 .res-title { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.7); margin-bottom:12px; }
 .rl { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.1); font-size:.84rem; }
 .rd { color:rgba(255,255,255,.8); }
@@ -299,10 +302,10 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 
 /* Dyn items */
 .dyn-item { display:flex; align-items:center; gap:8px; margin-bottom:8px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
-.dyn-item input[type=text] { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-family:'Nunito',sans-serif; font-size:.84rem; color:var(--ink); outline:none; }
+.dyn-item input[type=text] { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; color:var(--ink); outline:none; }
 .dyn-item input[type=text]:focus { border-color:var(--teal); }
 .btn-rm { background:rgba(239,83,80,.1); border:1px solid rgba(239,83,80,.2); border-radius:7px; color:var(--red); width:28px; height:28px; cursor:pointer; font-size:.9rem; display:flex; align-items:center; justify-content:center; }
-.btn-add-dyn { width:100%; background:var(--surface2); border:2px dashed var(--border); border-radius:10px; padding:10px; font-family:'Nunito',sans-serif; font-size:.82rem; font-weight:700; color:var(--ink3); cursor:pointer; margin-top:8px; transition:all .2s; }
+.btn-add-dyn { width:100%; background:var(--surface2); border:2px dashed var(--border); border-radius:10px; padding:10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; color:var(--ink3); cursor:pointer; margin-top:8px; transition:all .2s; }
 .btn-add-dyn:hover { border-color:var(--teal); color:var(--teal); background:rgba(0,137,123,.05); }
 
 /* Obs tooltip */
@@ -332,7 +335,7 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 .meta-progress-fill { height:100%; border-radius:10px; background:linear-gradient(90deg,var(--teal),var(--green-acc)); transition:width .5s; }
 
 /* Scrollbar */
-.menu-mob-item{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;font-family:'Nunito',sans-serif;text-align:left;transition:background .15s;-webkit-tap-highlight-color:transparent;}
+.menu-mob-item{width:100%;display:flex;align-items:center;gap:14px;padding:14px 16px;background:none;border:none;border-bottom:1px solid var(--border);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;text-align:left;transition:background .15s;-webkit-tap-highlight-color:transparent;}
 .menu-mob-item:active{background:rgba(0,137,123,.08);}
 .menu-mob-ic{width:44px;height:44px;border-radius:50%;background:rgba(0,137,123,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .menu-mob-lbl{flex:1;font-size:.92rem;font-weight:700;color:var(--ink);}
@@ -369,7 +372,7 @@ body.mobile-mode .filter-sel {
 #btn-futuros {
   display:inline-flex; align-items:center; gap:8px;
   background:none; border:none; padding:6px 2px;
-  cursor:pointer; font-family:'Nunito',sans-serif;
+  cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
   font-size:.84rem; font-weight:600;
   color:var(--ink); transition:color .2s;
   -webkit-tap-highlight-color:transparent;
@@ -402,19 +405,19 @@ body.mobile-mode #mob-nav { display:flex; }
 .mob-nav-btn {
   display:flex; flex-direction:column; align-items:center; gap:3px;
   background:none; border:none; color:var(--ink3); cursor:pointer;
-  font-family:'Nunito',sans-serif; font-size:.58rem; font-weight:700;
-  padding:6px 8px; flex:1; transition:color .2s;
+  font-family:'Plus Jakarta Sans',sans-serif; font-size:.58rem; font-weight:600;
+  padding:6px 8px; flex:1; transition:color .15s;
   -webkit-tap-highlight-color:transparent;
 }
 .mob-nav-btn svg { width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
-.mob-nav-btn.active { color:var(--teal-dark); }
+.mob-nav-btn.active { color:var(--teal); }
 
 /* FAB central estilo Sicoob */
 #mob-fab {
-  width:58px; height:58px; border-radius:50%;
-  background:linear-gradient(135deg,var(--teal-light),var(--teal));
+  width:56px; height:56px; border-radius:50%;
+  background:var(--teal);
   border:3px solid var(--surface);
-  box-shadow:0 4px 18px rgba(0,137,123,.45);
+  box-shadow:0 4px 18px rgba(10,92,74,.35);
   display:none; align-items:center; justify-content:center;
   cursor:pointer; margin-top:-18px; flex-shrink:0;
   -webkit-tap-highlight-color:transparent;
@@ -440,7 +443,7 @@ body.light-mode { }
 
 /* PC tabs */
 .pc-tabs { display:flex; gap:8px; margin-bottom:16px; }
-.pc-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--border); background:var(--surface); font-family:'Nunito',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink2); transition:all .2s; }
+.pc-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--border); background:var(--surface); font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; color:var(--ink2); transition:all .2s; }
 .pc-tab.active { background:var(--teal); border-color:var(--teal); color:#fff; }
 
 /* Virar mês modal */
@@ -487,11 +490,11 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     <input type="number" id="g-ano" value="2025" min="2020" max="2099" onchange="onMesChange()">
   </div>
   <div style="padding:12px 14px;border-bottom:1px solid var(--border);background:rgba(80,200,120,.05);">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:#50c878;margin-bottom:7px;">🍽 Crédito Swile do mês</div>
+    <div style="font-family:'DM Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:#50c878;margin-bottom:7px;">🍽 Crédito Swile do mês</div>
     <div style="display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid rgba(80,200,120,.3);border-radius:6px;padding:6px 10px;">
-      <span style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ink3);">R$</span>
+      <span style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ink3);">R$</span>
       <input type="number" id="swile-global" placeholder="0,00" step="0.01" min="0"
-        style="border:none;background:transparent;font-family:'JetBrains Mono',monospace;font-size:.9rem;color:#50c878;width:100%;outline:none;"
+        style="border:none;background:transparent;font-family:'DM Mono',monospace;font-size:.9rem;color:#50c878;width:100%;outline:none;"
         oninput="onSwileChange(this.value)">
     </div>
     <div style="font-size:.64rem;color:var(--ink3);margin-top:5px;line-height:1.4;">Informe o crédito recebido no início do mês. Soma em Alimentação e abate da Queila.</div>
@@ -659,7 +662,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     </div>
     <div class="form-group" id="l-digitos-group" style="display:none;">
       <label class="form-label">Últimos 4 dígitos (cartão virtual Sicoob)</label>
-      <input type="text" class="form-input" id="l-digitos" placeholder="ex: 1234" maxlength="4" style="font-family:'JetBrains Mono',monospace;letter-spacing:.2em;">
+      <input type="text" class="form-input" id="l-digitos" placeholder="ex: 1234" maxlength="4" style="font-family:'DM Mono',monospace;letter-spacing:.2em;">
     </div>
     <div class="form-group">
       <div class="form-check"><input type="checkbox" id="l-parcelado" onchange="toggleParc()"><label for="l-parcelado">Compra parcelada</label></div>
@@ -821,7 +824,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     <div id="senha-cfg-erro" style="color:var(--red);font-size:.8rem;display:none;"></div>
   </div>
   <div style="padding:0 22px 14px;">
-    <button onclick="cadastrarBiometria()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:.84rem;font-weight:700;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+    <button onclick="cadastrarBiometria()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;font-weight:700;color:var(--ink2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
       Cadastrar / Atualizar Biometria
     </button>
@@ -895,12 +898,12 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <!-- ═══════════════════════════════ -->
 <!-- TELA DE BLOQUEIO               -->
 <!-- ═══════════════════════════════ -->
-<div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,var(--teal-dark) 0%,var(--teal) 55%,var(--teal-mid) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
+<div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:#0A1F1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
   <!-- Padrão geométrico -->
   <div style="position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 60px;"></div>
 
   <!-- Logo -->
-  <div style="width:72px;height:72px;background:var(--green-acc);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:var(--teal-dark);margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.2);">GF</div>
+  <div style="width:72px;height:72px;background:var(--teal);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;color:#fff;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);">GF</div>
   <div style="color:#fff;font-size:1.1rem;font-weight:900;letter-spacing:.02em;margin-bottom:4px;">Gestão Financeira</div>
   <div style="color:rgba(255,255,255,.6);font-size:.75rem;font-weight:600;margin-bottom:40px;">FAMILIAR</div>
 
@@ -909,19 +912,19 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     <div style="background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
       <input type="text" autocomplete="off" style="-webkit-text-security:disc;" id="lock-senha" placeholder="Digite sua senha" autocomplete="off"
-        style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;"
+        style="border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;"
         onkeydown="if(event.key==='Enter')desbloquear()"
         placeholder="Digite sua senha">
     </div>
     <div id="lock-erro" style="display:none;color:#ff6b6b;font-size:.82rem;text-align:center;margin-bottom:12px;font-weight:700;">Senha incorreta</div>
 
     <!-- Botão desbloquear -->
-    <button onclick="desbloquear()" style="width:100%;background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 16px rgba(105,240,174,.3);">
+    <button onclick="desbloquear()" style="width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 16px rgba(105,240,174,.3);">
       Desbloquear
     </button>
 
     <!-- Botão biometria -->
-    <button id="btn-biometria" onclick="desbloquearBiometria()" style="width:100%;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+    <button id="btn-biometria" onclick="desbloquearBiometria()" style="width:100%;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/>
         <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/>
@@ -938,7 +941,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
   <!-- Nota sem senha -->
   <div id="lock-no-senha" style="display:none;margin-top:20px;text-align:center;">
     <div style="color:rgba(255,255,255,.7);font-size:.82rem;margin-bottom:12px;">Nenhuma senha configurada</div>
-    <button onclick="entrarSemSenha()" style="background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:10px;padding:12px 24px;font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;">
+    <button onclick="entrarSemSenha()" style="background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:10px;padding:12px 24px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;">
       Entrar no App
     </button>
   </div>
@@ -1082,7 +1085,7 @@ function showPage(p){
   if(ptEl) ptEl.innerHTML=`<div style="font-size:1rem;font-weight:900;letter-spacing:.02em;">${titles[p]||p.toUpperCase()}</div><div style="font-size:.72rem;font-weight:600;opacity:.82;margin-top:1px;">${getMesLabel()}</div>`;
   const actions=document.getElementById('topbar-actions');
   if(actions){
-    const icones=`<span id="sync-status" style="font-family:'Nunito',monospace;font-size:.7rem;color:rgba(255,255,255,.7);font-weight:700;margin-right:4px;"></span><button onclick="toggleMobile()" id="btn-layout" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button><button onclick="toggleTema()" id="btn-tema" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>`;
+    const icones=`<span id="sync-status" style="font-family:'Nunito',monospace;font-size:.7rem;color:rgba(255,255,255,.7);font-weight:700;margin-right:4px;"></span><button onclick="toggleMobile()" id="btn-layout" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button><button onclick="toggleTema()" id="btn-tema" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>`;
     let btn='';
     if(p==='lancamentos') btn='<button class="btn btn-primary" onclick="openModalLanc()">+ Lançamento</button>';
     else if(p==='cartoes') btn='<button class="btn btn-primary" onclick="openModalCartao()">+ Cartão</button>';
@@ -1361,13 +1364,13 @@ function renderTabela(){
     const ccor=c?c.cor:'#666';
     const cicon=c&&c.tipo==='pix'?'💸 ':'';
     const parcTxt=l.parcelado?`${String(l.pa).padStart(2,'0')}/${String(l.pt).padStart(2,'0')}`:'—';
-    const digitosBadge=l.digitos?` <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;background:rgba(96,144,232,.15);color:var(--blue);border:1px solid rgba(96,144,232,.3);padding:1px 6px;border-radius:3px;">****${l.digitos}</span>`:''; 
+    const digitosBadge=l.digitos?` <span style="font-family:'DM Mono',monospace;font-size:.6rem;background:rgba(96,144,232,.15);color:var(--blue);border:1px solid rgba(96,144,232,.3);padding:1px 6px;border-radius:3px;">****${l.digitos}</span>`:''; 
     const tipoTxt=l.recorrente?`<span class="rec-badge">↻${l.recDia?' dia '+l.recDia:''}</span>`:l.parcelado?`<span class="parc-badge">${parcTxt}</span>`:'<span style="color:var(--ink3);font-size:.72rem;">À vista</span>';
     const futuroBadge=futuro?`<span class="futuro-badge">📅 futuro</span> `:'';
     const dataFmt=l.data?new Date(l.data+'T12:00:00').toLocaleDateString('pt-BR'):'—';
     const dataLabel=l.parcelado
-      ?`<span style="color:var(--ink3);font-family:'JetBrains Mono',monospace;font-size:.72rem;" title="Data da compra">${dataFmt}</span>`
-      :`<span style="color:var(--ink3);font-family:'JetBrains Mono',monospace;font-size:.72rem;">${dataFmt}</span>`;
+      ?`<span style="color:var(--ink3);font-family:'DM Mono',monospace;font-size:.72rem;" title="Data da compra">${dataFmt}</span>`
+      :`<span style="color:var(--ink3);font-family:'DM Mono',monospace;font-size:.72rem;">${dataFmt}</span>`;
     return`<tr class="${futuro?'lanc-futuro':''}">
       <td class="td-desc"><strong>${l.desc}</strong>${digitosBadge}${l.groupId?`<span title="Lançamento dividido" style="font-size:.78rem;margin-left:4px;opacity:.6;">🔗</span>`:''} ${l.obs?`<span class="obs-tooltip" style="margin-left:5px;" onclick="this.classList.toggle('open');event.stopPropagation()"><span style="font-size:.8rem;color:var(--ink3);">💬</span><span class="obs-tip">${l.obs}</span></span>`:''} ${l.categoria?`<span class="cat-tag">${l.categoria}</span>`:''}</td>
       <td><span class="tag" style="background:${pcor}22;color:${pcor};border:1px solid ${pcor}44">${p?p.nome:'?'}</span></td>
@@ -1581,11 +1584,11 @@ function tabelaLancs50(lancs){
     </tr></thead>
     <tbody>${lancs.map(l=>{
       const c=getCartao(l.cartaoId);
-      const parc=l.parcelado?` <span style="color:var(--teal);font-family:'JetBrains Mono',monospace;font-size:.66rem;">(${l.pa}/${l.pt})</span>`:'';
+      const parc=l.parcelado?` <span style="color:var(--teal);font-family:'DM Mono',monospace;font-size:.66rem;">(${l.pa}/${l.pt})</span>`:'';
       const rec=l.recorrente?` <span style="color:var(--teal);font-size:.66rem;">↻</span>`:'';
       const is50=isMeia(l.categoria);
       const valorExib=is50?l.valor*0.5:l.valor;
-      const badge=is50?` <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;background:rgba(232,197,71,.15);color:var(--accent);border:1px solid rgba(232,197,71,.3);padding:1px 5px;border-radius:3px;">50%</span>`:'';
+      const badge=is50?` <span style="font-family:'DM Mono',monospace;font-size:.58rem;background:rgba(232,197,71,.15);color:var(--accent);border:1px solid rgba(232,197,71,.3);padding:1px 5px;border-radius:3px;">50%</span>`:'';
       const tdStyle='padding:7px 8px;border-bottom:1px solid var(--surface2);vertical-align:top;';
       // Separar R$ do número para alinhar coluna
       const [rs,num]=fmt(valorExib).split('\u00a0').length>1?fmt(valorExib).split('\u00a0'):['R$',fmt(valorExib).replace('R$','').trim()];
@@ -1593,7 +1596,7 @@ function tabelaLancs50(lancs){
       return`<tr>
         <td style="${tdStyle}font-size:.84rem;overflow:hidden;text-overflow:ellipsis;">${l.desc}${parc}${rec}${badge}${is50?`<div style="font-size:.65rem;color:var(--ink3);">total ${fmt(l.valor)}</div>`:''}</td>
         <td style="${tdStyle}font-size:.76rem;color:var(--ink3);white-space:nowrap;">${c?c.nome:'?'}</td>
-        <td style="${tdStyle}font-family:'JetBrains Mono',monospace;font-size:.84rem;white-space:nowrap;padding-right:4px;">
+        <td style="${tdStyle}font-family:'DM Mono',monospace;font-size:.84rem;white-space:nowrap;padding-right:4px;">
           <div style="display:flex;align-items:baseline;gap:2px;">
             <span style="color:var(--ink3);font-size:.72rem;flex-shrink:0;">R$</span>
             <span style="flex:1;text-align:right;">${fmtVal}</span>
@@ -1638,7 +1641,7 @@ function renderPCQueila(){
     <div class="info-tip">O crédito Swile é informado na barra lateral (campo verde). Ele soma nas despesas de Alimentação e é abatido da parte da Queila no fechamento.</div>
     <div style="display:flex;align-items:center;gap:12px;padding:10px 0;">
       <span style="font-size:.85rem;color:var(--ink2);">Crédito recebido este mês:</span>
-      <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:#50c878;">${fmt(swileCredito)}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:1.1rem;color:#50c878;">${fmt(swileCredito)}</span>
     </div>`);
 
   // SEÇÃO 4: Outras Despesas (unificação de fixas + acordos)
@@ -1702,8 +1705,8 @@ function renderOutrasPC(){
   (S.outrasDespesas||[]).forEach((f,i)=>{
     const d=document.createElement('div');
     d.style.cssText='background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;';
-    const parcLabel=f.parcelado&&f.pa&&f.pt?` <span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--accent);">${String(f.pa).padStart(2,'0')}/${String(f.pt).padStart(2,'0')}</span>`:'';
-    const recLabel=f.recorrente?` <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;background:rgba(160,112,224,.15);color:var(--purple);border:1px solid rgba(160,112,224,.3);padding:1px 6px;border-radius:10px;">↻</span>`:'';
+    const parcLabel=f.parcelado&&f.pa&&f.pt?` <span style="font-family:'DM Mono',monospace;font-size:.7rem;color:var(--accent);">${String(f.pa).padStart(2,'0')}/${String(f.pt).padStart(2,'0')}</span>`:'';
+    const recLabel=f.recorrente?` <span style="font-family:'DM Mono',monospace;font-size:.65rem;background:rgba(160,112,224,.15);color:var(--purple);border:1px solid rgba(160,112,224,.3);padding:1px 6px;border-radius:10px;">↻</span>`:'';
     d.innerHTML=`
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
         <div style="display:flex;flex-direction:column;gap:2px;flex-shrink:0;">
@@ -1711,7 +1714,7 @@ function renderOutrasPC(){
           <button onclick="moverOutra(${i},1)" ${i===total-1?'disabled':''} style="background:none;border:1px solid var(--border);border-radius:4px;color:${i===total-1?'var(--ink3)':'var(--ink2)'};cursor:${i===total-1?'default':'pointer'};padding:1px 5px;font-size:.7rem;line-height:1.2;">↓</button>
         </div>
         <input type="text" placeholder="Nome da despesa" value="${f.nome}" oninput="S.outrasDespesas[${i}].nome=this.value;save();calcQueila()"
-          style="flex:1;min-width:0;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:.84rem;color:var(--ink);outline:none;">
+          style="flex:1;min-width:0;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;color:var(--ink);outline:none;">
         <button onclick="remOutra(${i})" title="Remover" style="background:rgba(239,83,80,.1);border:1px solid rgba(239,83,80,.3);border-radius:7px;color:var(--red);width:32px;height:32px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✕</button>
       </div>
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
@@ -1731,11 +1734,11 @@ function renderOutrasPC(){
         <div id="outra-parc-${i}" style="display:${f.parcelado?'flex':'none'};align-items:center;gap:8px;">
           <span style="font-size:.76rem;color:var(--ink3);">Parcela</span>
           <input type="number" min="1" value="${f.pa||1}"
-            style="background:var(--surface3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--ink);width:60px;outline:none;"
+            style="background:var(--surface3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--ink);width:60px;outline:none;"
             onchange="S.outrasDespesas[${i}].pa=parseInt(this.value)||1;save();calcQueila();">
           <span style="font-size:.76rem;color:var(--ink3);">de</span>
           <input type="number" min="1" value="${f.pt||2}"
-            style="background:var(--surface3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--ink);width:60px;outline:none;"
+            style="background:var(--surface3);border:1px solid var(--border);border-radius:5px;padding:4px 8px;font-family:'DM Mono',monospace;font-size:.82rem;color:var(--ink);width:60px;outline:none;"
             onchange="S.outrasDespesas[${i}].pt=parseInt(this.value)||2;save();calcQueila();">
         </div>
       </div>`;
@@ -1760,7 +1763,7 @@ function renderCredPC(totalCQItau, swileCredito){
     const d=document.createElement('div');d.className='dyn-item';
     d.innerHTML=`<input type="text" value="Família no cartão Itaú (Queila paga)" readonly style="opacity:.6;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.84rem;color:var(--ink);">
       <div class="money-wrap" style="min-width:130px"><span>R$</span><input type="number" value="${totalCQItau.toFixed(2)}" readonly style="width:80px;opacity:.6"></div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);padding:0 6px;">AUTO</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--green);padding:0 6px;">AUTO</div>
       <div style="width:28px"></div>`;
     el.appendChild(d);
   }
@@ -1769,7 +1772,7 @@ function renderCredPC(totalCQItau, swileCredito){
     const d=document.createElement('div');d.className='dyn-item';
     d.innerHTML=`<input type="text" value="Crédito Swile recebido este mês" readonly style="opacity:.6;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:.84rem;color:var(--ink);">
       <div class="money-wrap" style="min-width:130px"><span>R$</span><input type="number" value="${swileCredito.toFixed(2)}" readonly style="width:80px;opacity:.6"></div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);padding:0 6px;">AUTO</div>
+      <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:var(--green);padding:0 6px;">AUTO</div>
       <div style="width:28px"></div>`;
     el.appendChild(d);
   }
@@ -2531,7 +2534,7 @@ function renderMetas(){
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
           <div>
             <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:.9rem;">${m.categoria}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--ink3);margin-top:2px;">${mesStr}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink3);margin-top:2px;">${mesStr}</div>
           </div>
           <div style="display:flex;gap:5px;">
             <button class="btn btn-ghost btn-sm" onclick="openModalMeta('${m.id}')">✏️</button>
@@ -2539,14 +2542,14 @@ function renderMetas(){
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
-          <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:${cor};">${fmt(gasto)}</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--ink3);">de ${fmt(m.valor)}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:${cor};">${fmt(gasto)}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--ink3);">de ${fmt(m.valor)}</span>
         </div>
         <div style="background:var(--surface2);border-radius:4px;height:8px;overflow:hidden;margin-bottom:8px;">
           <div style="height:100%;width:${perc}%;background:${cor};border-radius:4px;transition:width .4s;"></div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:.75rem;">
-          <span style="color:${cor};font-family:'JetBrains Mono',monospace;font-weight:500;">${perc.toFixed(1)}% utilizado</span>
+          <span style="color:${cor};font-family:'DM Mono',monospace;font-weight:500;">${perc.toFixed(1)}% utilizado</span>
           <span style="color:var(--ink3);">${restante>=0?'Restam '+fmt(restante):'Excedeu '+fmt(-restante)}</span>
         </div>
       </div>`;
@@ -2607,18 +2610,18 @@ function renderGraficoComparativo(){
       const perc=maxVal>0?(v/maxVal*100):0;
       const isCurrent=mi===2;
       return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--ink2);white-space:nowrap;">${fmt(v)}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--ink2);white-space:nowrap;">${fmt(v)}</div>
         <div style="width:100%;background:var(--surface2);border-radius:4px 4px 0 0;height:120px;display:flex;align-items:flex-end;">
           <div style="width:100%;height:${Math.max(perc,2)}%;background:${isCurrent?p.cor:barColor(p.cor,0.45)};border-radius:4px 4px 0 0;transition:height .4s;min-height:4px;"></div>
         </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:${isCurrent?'var(--ink)':'var(--ink3)'};">${mesLabels[mi]}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:${isCurrent?'var(--ink)':'var(--ink3)'};">${mesLabels[mi]}</div>
       </div>`;
     }).join('');
     return`<div style="flex:1;background:var(--surface2);border:1px solid ${p.cor}33;border-radius:10px;padding:14px 12px;">
       <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
         <div style="width:10px;height:10px;border-radius:50%;background:${p.cor};flex-shrink:0;"></div>
         <span style="font-size:.8rem;font-weight:600;">${p.nome}</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem;color:${p.cor};margin-left:auto;">${fmt(p.vals[2])}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:${p.cor};margin-left:auto;">${fmt(p.vals[2])}</span>
       </div>
       <div style="display:flex;gap:6px;align-items:flex-end;">${bars}</div>
     </div>`;
@@ -2654,7 +2657,7 @@ function renderPainel(){
   }
 
   // ── TOTAL GERAL ──
-  const tagTotal=`<div class="stat-card" style="border-top:3px solid var(--teal);grid-column:1/-1;">
+  const tagTotal=`<div class="stat-card" style="border-left:3px solid var(--teal);grid-column:1/-1;">
     <div class="stat-lbl">Total do Mês (c/ Swile)</div>
     <div class="stat-val accent">${fmt(total+swileCredito)}</div>
   </div>`;
@@ -2759,20 +2762,20 @@ function renderRelMensal(){
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
         <div>
           <div style="font-family:'Inter',sans-serif;font-weight:700;font-size:.9rem;">${titulo}</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--ink3);">${subtitulo}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:.62rem;color:var(--ink3);">${subtitulo}</div>
         </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--accent);">${fmt(total)}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--accent);">${fmt(total)}</div>
       </div>
       ${dados.map(([cat,val])=>{
         const perc=(val/total*100).toFixed(1);
         const meta=S.metas.find(m=>m.categoria===cat||('Alimentação (+ Swile)'===cat&&m.categoria==='Alimentação'));
-        const metaBar=meta?`<div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:${val/meta.valor>=1?'var(--red)':'var(--ink3)'};">Meta: ${fmt(meta.valor)} (${(val/meta.valor*100).toFixed(0)}%)</div>`:'';
+        const metaBar=meta?`<div style="font-family:'DM Mono',monospace;font-size:.62rem;color:${val/meta.valor>=1?'var(--red)':'var(--ink3)'};">Meta: ${fmt(meta.valor)} (${(val/meta.valor*100).toFixed(0)}%)</div>`:'';
         return`<div style="margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
             <span style="font-size:.85rem;">${cat}</span>
             <div style="text-align:right;">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:.88rem;font-weight:500;">${fmt(val)}</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--ink3);margin-left:6px;">${perc}%</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.88rem;font-weight:500;">${fmt(val)}</span>
+              <span style="font-family:'DM Mono',monospace;font-size:.68rem;color:var(--ink3);margin-left:6px;">${perc}%</span>
             </div>
           </div>
           <div style="background:var(--surface2);border-radius:3px;height:6px;overflow:hidden;margin-bottom:2px;">
@@ -3041,19 +3044,19 @@ if('serviceWorker' in navigator){
 <div id="mob-mais-menu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:var(--bg);overflow-y:auto;">
 
   <!-- Header — mesmo estilo das outras páginas -->
-  <div style="background:linear-gradient(135deg,var(--teal-dark),var(--teal));padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:510;box-shadow:0 2px 16px rgba(0,105,92,.2);">
+  <div style="background:#0A1F1A;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:510;border-bottom:1px solid rgba(255,255,255,.06);">
     <div>
       <div style="color:#fff;font-size:1rem;font-weight:900;letter-spacing:.02em;">MENU</div>
       <div id="menu-mes-label" style="color:rgba(255,255,255,.82);font-size:.72rem;font-weight:600;margin-top:1px;"></div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <button onclick="toggleMobile()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
+      <button onclick="toggleMobile()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
       </button>
-      <button onclick="toggleTema()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
+      <button onclick="toggleTema()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
-      <button onclick="closeMobMenu()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
+      <button onclick="closeMobMenu()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
@@ -3064,19 +3067,19 @@ if('serviceWorker' in navigator){
 
   <!-- Seletor de mês + Swile -->
   <div style="padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;">
-    <select id="g-mes-mob" onchange="document.getElementById('g-mes').value=this.value;onMesChange();updateMenuMesLabel()" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:10px;outline:none;">
+    <select id="g-mes-mob" onchange="document.getElementById('g-mes').value=this.value;onMesChange();updateMenuMesLabel()" style="flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:10px;outline:none;">
       <option value="0">Janeiro</option><option value="1">Fevereiro</option><option value="2">Março</option>
       <option value="3">Abril</option><option value="4">Maio</option><option value="5">Junho</option>
       <option value="6">Julho</option><option value="7">Agosto</option><option value="8">Setembro</option>
       <option value="9">Outubro</option><option value="10">Novembro</option><option value="11">Dezembro</option>
     </select>
-    <select id="g-ano-mob" onchange="document.getElementById('g-ano').value=this.value;onMesChange();updateMenuMesLabel()" style="width:86px;background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:10px;outline:none;">
+    <select id="g-ano-mob" onchange="document.getElementById('g-ano').value=this.value;onMesChange();updateMenuMesLabel()" style="width:86px;background:var(--surface2);border:1px solid var(--border);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;padding:8px 10px;border-radius:10px;outline:none;">
       <option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
     </select>
-    <div style="display:flex;align-items:center;gap:5px;background:rgba(105,240,174,.08);border:1px solid rgba(105,240,174,.25);border-radius:10px;padding:6px 10px;">
+    <div style="display:flex;align-items:center;gap:5px;background:rgba(0,200,150,.06);border:1px solid rgba(0,200,150,.15);border-radius:10px;padding:6px 10px;">
       <span style="font-size:.72rem;color:#43A047;font-weight:700;">Swile R$</span>
       <input type="number" id="swile-global-mob" placeholder="0,00" step="0.01" min="0"
-        style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;color:#43A047;width:68px;outline:none;"
+        style="border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:700;color:#43A047;width:68px;outline:none;"
         oninput="onSwileChange(this.value);document.getElementById('swile-global').value=this.value;">
     </div>
   </div>
