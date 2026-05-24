@@ -182,7 +182,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .stat-card {
   background:var(--surface); border-radius:12px; padding:14px 16px;
   box-shadow:var(--shadow-sm); border:1px solid var(--border);
-  border-top:2.5px solid var(--teal);
+  border-left:3px solid var(--teal);
   transition:transform .15s, box-shadow .15s;
 }
 .stat-card:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
@@ -547,21 +547,33 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div class="page-title" id="page-title"><div style="font-size:1rem;font-weight:900;letter-spacing:.02em;">LANÇAMENTOS</div><div style="font-size:.72rem;font-weight:600;opacity:.82;margin-top:1px;" id="mes-label">...</div></div>
+    <!-- Linha 1: Logo + slogan + ícones -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:9px;">
+        <svg width="26" height="26" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#mon-tb)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="mon-tb" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+        <div>
+          <div style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1;">Monetra</div>
+          <div style="font-size:7.5px;color:rgba(255,255,255,.32);font-weight:500;">Sua vida financeira em equilíbrio.</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span id="sync-status" style="font-size:.7rem;color:rgba(255,255,255,.7);font-weight:700;"></span>
+        <button onclick="toggleMobile()" id="btn-layout" title="Alternar layout" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+        </button>
+        <button onclick="toggleTema()" id="btn-tema" title="Tema" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+        </button>
+        <div id="topbar-actions" style="display:flex;align-items:center;gap:6px;"></div>
+      </div>
     </div>
-    <div class="topbar-actions" id="topbar-actions">
-      <span id="sync-status"></span>
-      <!-- Ícones circulares mobile na topbar -->
-      <button onclick="toggleMobile()" id="btn-layout" title="Alternar layout"
-        style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
-      </button>
-      <button onclick="toggleTema()" id="btn-tema" title="Tema claro/escuro"
-        style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </button>
-      <button class="btn btn-primary" onclick="openModalLanc()">+ Lançamento</button>
+    <!-- Linha 2: Saudação / Título da página -->
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;">
+      <div>
+        <div id="topbar-greeting" style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1;">Olá, Carlos.</div>
+        <div id="topbar-sub" style="font-size:8px;color:rgba(255,255,255,.3);margin-top:3px;font-weight:500;"></div>
+      </div>
+      <div id="topbar-right"></div>
     </div>
   </div>
   <div class="content">
@@ -898,9 +910,67 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <!-- ═══════════════════════════════ -->
 <!-- TELA DE BLOQUEIO               -->
 <!-- ═══════════════════════════════ -->
-<div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:#0A1F1A;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;">
-  <!-- Padrão geométrico -->
-  <div style="position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.05)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 60px;"></div>
+<div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:#0A1F1A;">
+
+  <!-- ETAPA 1: Avatar + Entrar -->
+  <div id="lock-step1" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:56px 28px 60px;">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 60px;"></div>
+    <!-- Logo topo -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
+      <svg width="48" height="48" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#lg-e1)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="lg-e1" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+      <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;">Monetra</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.28);font-weight:500;">Sua vida financeira em equilíbrio.</div>
+    </div>
+    <!-- Avatar + nome + botão -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px;position:relative;z-index:1;">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0F2B24,#1A3D30);border:2px solid rgba(34,197,94,.18);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 8px rgba(34,197,94,.05);">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.3" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.4px;">Carlos</div>
+      <button onclick="document.getElementById('lock-step1').style.display='none';document.getElementById('lock-step2').style.display='flex';setTimeout(()=>document.getElementById('lock-senha').focus(),100);"
+        style="background:transparent;border:1.5px solid rgba(255,255,255,.2);border-radius:28px;padding:11px 44px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,.6);letter-spacing:.18em;text-transform:uppercase;cursor:pointer;">
+        Entrar
+      </button>
+    </div>
+    <div></div>
+  </div>
+
+  <!-- ETAPA 2: Senha + Biometria -->
+  <div id="lock-step2" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:56px 28px 60px;">
+    <div style="position:absolute;inset:0;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='30,5 55,50 5,50' fill='none' stroke='rgba(255,255,255,0.04)' stroke-width='1'/%3E%3C/svg%3E");background-size:60px 60px;"></div>
+    <!-- Logo topo -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
+      <svg width="48" height="48" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#lg-e2)" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="lg-e2" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+      <div style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;">Monetra</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.28);font-weight:500;">Sua vida financeira em equilíbrio.</div>
+    </div>
+    <!-- Senha + biometria -->
+    <div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;">
+      <div style="text-align:center;margin-bottom:6px;">
+        <div style="font-size:18px;font-weight:700;color:#fff;">Olá, Carlos.</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.28);margin-top:4px;">Digite sua senha para continuar</div>
+      </div>
+      <div id="lock-erro" style="display:none;color:#FF6B6B;font-size:.82rem;text-align:center;font-weight:600;"></div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <input type="text" id="lock-senha" autocomplete="off" style="-webkit-text-security:disc;border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;" placeholder="Senha" onkeydown="if(event.key==='Enter')desbloquear()">
+      </div>
+      <button onclick="desbloquear()" style="background:#0A5C4A;border:none;border-radius:14px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(10,92,74,.4);">Desbloquear</button>
+      <div style="display:flex;align-items:center;gap:10px;margin:2px 0;"><div style="flex:1;height:1px;background:rgba(255,255,255,.07);"></div><span style="font-size:10px;color:rgba(255,255,255,.2);">ou</span><div style="flex:1;height:1px;background:rgba(255,255,255,.07);"></div></div>
+      <button id="btn-biometria" onclick="desbloquearBiometria()" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:13px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.8" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/><path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/><circle cx="12" cy="12" r="1.5" fill="rgba(255,255,255,.4)"/></svg>
+        <span style="font-size:12px;color:rgba(255,255,255,.4);font-weight:600;">Usar biometria</span>
+      </button>
+      <div id="lock-bio-status" style="color:rgba(255,255,255,.35);font-size:.75rem;text-align:center;min-height:16px;"></div>
+      <button onclick="document.getElementById('lock-step2').style.display='none';document.getElementById('lock-step1').style.display='flex';"
+        style="background:none;border:none;font-size:11px;color:rgba(255,255,255,.2);cursor:pointer;text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-weight:500;margin-top:2px;">
+        ← Voltar
+      </button>
+    </div>
+    <div></div>
+  </div>
+
+</div>
 
   <!-- Logo -->
   <div style="width:72px;height:72px;background:var(--teal);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;color:#fff;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);">GF</div>
@@ -1081,18 +1151,32 @@ function showPage(p){
   });
   closeMobMenu();
   const titles={lancamentos:'LANÇAMENTOS',prestacao:'PRESTAÇÃO DE CONTAS',relatorio:'RELATÓRIO MENSAL',metas:'METAS',categorias:'CATEGORIAS',cartoes:'CARTÕES',pessoas:'PESSOAS',painel:'PAINEL'};
-  const ptEl=document.getElementById('page-title');
-  if(ptEl) ptEl.innerHTML=`<div style="font-size:1rem;font-weight:900;letter-spacing:.02em;">${titles[p]||p.toUpperCase()}</div><div style="font-size:.72rem;font-weight:600;opacity:.82;margin-top:1px;">${getMesLabel()}</div>`;
-  const actions=document.getElementById('topbar-actions');
-  if(actions){
-    const icones=`<span id="sync-status" style="font-family:'Nunito',monospace;font-size:.7rem;color:rgba(255,255,255,.7);font-weight:700;margin-right:4px;"></span><button onclick="toggleMobile()" id="btn-layout" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button><button onclick="toggleTema()" id="btn-tema" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>`;
+  // Atualizar topbar: linha 2 muda por página
+  const greetEl=document.getElementById('topbar-greeting');
+  const subEl=document.getElementById('topbar-sub');
+  const rightEl=document.getElementById('topbar-right');
+  const actionsEl=document.getElementById('topbar-actions');
+  if(greetEl && subEl && rightEl){
+    if(p==='lancamentos'){
+      greetEl.textContent='Olá, Carlos.';
+      greetEl.style.cssText='font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1;';
+      subEl.textContent='';
+      rightEl.innerHTML='<span style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.18);border-radius:7px;padding:3px 9px;font-size:8px;font-weight:700;color:#22C55E;letter-spacing:.08em;text-transform:uppercase;">'+getMesLabel()+'</span>';
+    } else {
+      greetEl.textContent=(titles[p]||p).toUpperCase();
+      greetEl.style.cssText='font-size:17px;font-weight:800;color:#fff;letter-spacing:-.2px;line-height:1;';
+      subEl.textContent=getMesLabel();
+      rightEl.innerHTML='';
+    }
+  }
+  if(actionsEl){
     let btn='';
     if(p==='lancamentos') btn='<button class="btn btn-primary" onclick="openModalLanc()">+ Lançamento</button>';
     else if(p==='cartoes') btn='<button class="btn btn-primary" onclick="openModalCartao()">+ Cartão</button>';
     else if(p==='pessoas') btn='<button class="btn btn-primary" onclick="openModalPessoa()">+ Pessoa</button>';
     else if(p==='categorias') btn='<button class="btn btn-primary" onclick="openModalCat()">+ Categoria</button>';
     else if(p==='metas') btn='<button class="btn btn-primary" onclick="openModalMeta()">+ Meta</button>';
-    actions.innerHTML=icones+btn;
+    actionsEl.innerHTML=btn;
   }
   if(p==='lancamentos'){renderStats();renderTabela();}
   if(p==='prestacao')renderPrestacao();
@@ -2881,8 +2965,12 @@ function mostrarLock(){
 }
 
 function fecharLock(){
-  const lock = document.getElementById('lock-screen');
-  if(lock) lock.style.display = 'none';
+  const lock=document.getElementById('lock-screen');
+  if(lock) lock.style.display='none';
+  const s1=document.getElementById('lock-step1');
+  const s2=document.getElementById('lock-step2');
+  if(s1) s1.style.display='flex';
+  if(s2) s2.style.display='none';
 }
 
 function desbloquear(){
