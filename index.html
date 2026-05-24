@@ -640,11 +640,11 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <div class="overlay" id="modal-lanc" onclick="if(event.target===this)cm('modal-lanc')">
 <div class="modal" onclick="event.stopPropagation()">
   <div class="modal-head"><h2 id="ml-title">Novo Lançamento</h2><button class="btn-x" onclick="cm('modal-lanc')">×</button></div>
-  <div class="modal-body">
+  <div class="modal-body" autocomplete="off">
     <input type="hidden" id="l-id">
     <div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input" id="l-desc" placeholder="Ex: Supermercado Boa Vista..."></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="number" class="form-input" id="l-valor" placeholder="0,00" step="0.01" min="0" oninput="atualizarTotalDivisao()"></div>
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" inputmode="numeric" class="form-input" id="l-valor" placeholder="0,00" oninput="maskMoney(this);atualizarTotalDivisao()"></div>
       <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="l-data"></div>
     </div>
     <div class="form-row">
@@ -673,7 +673,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
         <div style="flex:1;min-width:100px;">
           <label class="form-label">Valor total da compra</label>
-          <div class="money-wrap"><span>R$</span><input type="number" id="calc-total" placeholder="0,00" step="0.01" min="0" oninput="calcParcelaAuto()" style="width:100%;"></div>
+          <div class="money-wrap"><span>R$</span><input type="text" inputmode="numeric" id="calc-total" placeholder="0,00" oninput="maskMoney(this);calcParcelaAuto()" style="width:100%;"></div>
         </div>
         <div style="width:80px;">
           <label class="form-label">Parcelas</label>
@@ -798,7 +798,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
   <div class="modal-body">
     <div class="form-group">
       <label class="form-label">Senha</label>
-      <input type="password" class="form-input" id="senha-input" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')confirmarSenha()">
+      <input type="password" autocomplete="off" class="form-input" id="senha-input" placeholder="Digite a senha..." onkeydown="if(event.key==='Enter')confirmarSenha()">
     </div>
     <div id="senha-erro" style="color:var(--red);font-size:.8rem;margin-top:-8px;display:none;">Senha incorreta</div>
   </div>
@@ -815,8 +815,8 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
   <div class="modal-head"><h2>🔑 Definir Senha</h2><button class="btn-x" onclick="cm('modal-config-senha')">×</button></div>
   <div class="modal-body">
     <div class="info-tip">Esta senha protege as ações de limpar dados.</div>
-    <div class="form-group"><label class="form-label">Nova senha</label><input type="password" class="form-input" id="nova-senha" placeholder="Mínimo 4 caracteres"></div>
-    <div class="form-group"><label class="form-label">Confirmar senha</label><input type="password" class="form-input" id="conf-senha" placeholder="Repita a senha"></div>
+    <div class="form-group"><label class="form-label">Nova senha</label><input type="password" autocomplete="off" class="form-input" id="nova-senha" placeholder="Mínimo 4 caracteres"></div>
+    <div class="form-group"><label class="form-label">Confirmar senha</label><input type="password" autocomplete="off" class="form-input" id="conf-senha" placeholder="Repita a senha"></div>
     <div id="senha-cfg-erro" style="color:var(--red);font-size:.8rem;display:none;"></div>
   </div>
   <div style="padding:0 22px 14px;">
@@ -907,7 +907,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
   <div style="width:100%;max-width:320px;">
     <div style="background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      <input type="password" id="lock-senha" placeholder="Digite sua senha" autocomplete="current-password"
+      <input type="password" autocomplete="off" id="lock-senha" placeholder="Digite sua senha" autocomplete="off"
         style="border:none;background:transparent;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;"
         onkeydown="if(event.key==='Enter')desbloquear()"
         placeholder="Digite sua senha">
@@ -1131,7 +1131,10 @@ function openModalLanc(editId=null){
     const l=S.lancamentos.find(x=>x.id===editId);
     if(l){
       document.getElementById('l-desc').value=l.desc;
-      document.getElementById('l-valor').value=l.valor;
+      const _iv=l.valor||0;
+    const _ivf=parseFloat(_iv).toFixed(2).replace('.',',');
+    const el_v=document.getElementById('l-valor');
+    el_v.value=_ivf;el_v.dataset.val=parseFloat(_iv).toFixed(2);
       document.getElementById('l-data').value=l.data;
       document.getElementById('l-pessoa').value=l.pessoaId;
       document.getElementById('l-cartao').value=l.cartaoId;
@@ -1196,7 +1199,7 @@ function toggleParc(){
   }
 }
 function calcParcelaAuto(){
-  const total=parseFloat(document.getElementById('calc-total').value)||0;
+  const total=getMoneyVal(document.getElementById('calc-total'));
   const n=parseInt(document.getElementById('calc-n').value)||0;
   const res=document.getElementById('calc-resultado');
   if(total>0&&n>0){
@@ -1209,11 +1212,13 @@ function calcParcelaAuto(){
   }
 }
 function aplicarCalcParcela(){
-  const total=parseFloat(document.getElementById('calc-total').value)||0;
+  const total=getMoneyVal(document.getElementById('calc-total'));
   const n=parseInt(document.getElementById('calc-n').value)||0;
   if(!total||!n){toast('Preencha o valor total e quantidade de parcelas','error');return;}
   const parcela=Math.round(total/n*100)/100;
-  document.getElementById('l-valor').value=parcela.toFixed(2);
+  const _pf=parcela.toFixed(2);
+  const _ev=document.getElementById('l-valor');
+  _ev.value=_pf.replace('.',',');_ev.dataset.val=_pf;
   document.getElementById('l-pt').value=n;
   document.getElementById('l-pa').value=1;
   document.getElementById('calc-resultado').textContent=`✓ Aplicado: ${n}x de ${fmt(parcela)}`;
@@ -1221,7 +1226,7 @@ function aplicarCalcParcela(){
 }
 function salvarLanc(){
   const desc=document.getElementById('l-desc').value.trim();
-  const valor=parseFloat(document.getElementById('l-valor').value);
+  const valor=getMoneyVal(document.getElementById('l-valor'));
   const data=document.getElementById('l-data').value;
   const pessoaId=document.getElementById('l-pessoa').value;
   const cartaoId=document.getElementById('l-cartao').value;
@@ -2821,7 +2826,7 @@ function addDivisao(){
   atualizarTotalDivisao();
 }
 function atualizarTotalDivisao(){
-  const valorPrincipal=parseFloat(document.getElementById('l-valor').value)||0;
+  const valorPrincipal=getMoneyVal(document.getElementById('l-valor'));
   const rows=document.querySelectorAll('.div-item');
   const totalDiv=Array.from(rows).reduce((s,r)=>s+(parseFloat(r.querySelector('.div-valor').value)||0),0);
   const el=document.getElementById('divisao-total');
@@ -2831,6 +2836,18 @@ function atualizarTotalDivisao(){
   el.innerHTML=`<span>Principal: <b>${fmt(valorPrincipal)}</b> + Divisões: <b>${fmt(totalDiv)}</b> = </span><span class="${totalGeral>0?'dt-ok':''}"><b>${fmt(totalGeral)}</b> total</span>`;
 }
 
+function maskMoney(input){
+  let v=input.value.replace(/\D/g,'');
+  if(!v){input.value='';return;}
+  v=(parseInt(v)/100).toFixed(2);
+  input.value=v.replace('.',',');
+  // manter valor numérico em dataset
+  input.dataset.val=(parseInt(input.value.replace(/\D/g,''))/100).toFixed(2);
+}
+function getMoneyVal(input){
+  if(input.dataset.val) return parseFloat(input.dataset.val)||0;
+  return parseFloat(input.value.replace(',','.'))||0;
+}
 // ══════════════════════════════════════════
 // BLOQUEIO / DESBLOQUEIO
 // ══════════════════════════════════════════
