@@ -150,10 +150,23 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 /* Topbar */
 .topbar {
   background:#0A1F1A;
-  padding:14px 24px; display:flex; align-items:center; justify-content:space-between;
+  padding:8px 14px;
+  display:flex; flex-direction:row; align-items:stretch;
+  height:64px;
   position:sticky; top:0; z-index:50;
   border-bottom:1px solid rgba(255,255,255,.06);
 }
+.tb-left { display:flex; flex-direction:column; justify-content:space-between; align-items:flex-start; width:100px; flex-shrink:0; }
+.tb-center { flex:1; display:flex; align-items:center; justify-content:center; }
+.tb-right { display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; width:82px; flex-shrink:0; }
+.tb-logo-row { display:flex; align-items:center; gap:6px; }
+.tb-logo-name { font-size:13px; font-weight:800; color:#fff; letter-spacing:-.2px; line-height:1; }
+.tb-logo-slogan { font-size:6.5px; color:rgba(255,255,255,.3); font-weight:500; line-height:1.3; }
+.tb-page-name { font-size:14px; font-weight:800; color:#fff; letter-spacing:.04em; text-transform:uppercase; }
+.tb-mes { font-size:8px; font-weight:600; color:rgba(255,255,255,.35); letter-spacing:.06em; text-transform:uppercase; text-align:right; }
+.tb-icon-row { display:flex; gap:5px; }
+.tb-icon-btn { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.tb-icon-btn svg { width:13px; height:13px; stroke:#fff; fill:none; stroke-width:1.8; stroke-linecap:round; }
 .page-title { color:#fff; font-size:1rem; font-weight:800; }
 .page-title .mes-label-txt { color:var(--green-acc); }
 .topbar-actions { display:flex; gap:8px; align-items:center; }
@@ -351,9 +364,9 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 /* ══ MOBILE MODE ══ */
 body.mobile-mode .sidebar { display:none!important; }
 body.mobile-mode .main { margin-left:0; }
-body.mobile-mode .topbar { padding:12px 16px; position:fixed; top:0; left:0; right:0; z-index:100; }
+body.mobile-mode .topbar { padding:8px 14px; position:fixed; top:0; left:0; right:0; z-index:100; height:64px; }
 body.mobile-mode .topbar .btn-primary { display:none; }
-body.mobile-mode .content { padding:12px 12px 80px; margin-top:52px; }
+body.mobile-mode .content { padding:12px 12px 80px; margin-top:72px; }
 body.mobile-mode .stats-fileira { grid-template-columns:repeat(2,1fr)!important; }
 body.mobile-mode .stat-card { padding:12px 14px; }
 body.mobile-mode .table-wrap { display:none; }
@@ -471,12 +484,12 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-inner">
-      <div class="logo-badge">GF</div>
+  <div class="sb-logo" style="padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.06);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <svg width="28" height="28" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#mon-sb)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="mon-sb" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
       <div>
-        <div class="logo-text">Gestão Financeira</div>
-        <div class="logo-sub">Familiar</div>
+        <div style="font-size:.95rem;font-weight:800;color:#fff;letter-spacing:-.2px;line-height:1;">Monetra</div>
+        <div style="font-size:.55rem;color:rgba(255,255,255,.28);font-weight:500;margin-top:2px;">Sua vida financeira em equilíbrio.</div>
       </div>
     </div>
   </div>
@@ -506,11 +519,11 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
       </button>
       <button class="nav-btn" id="nav-prestacao" onclick="showPage('prestacao')">
         <div class="nav-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-        <span class="nav-lbl">Prestação de Contas</span>
+        <span class="nav-lbl">Fechamento</span>
       </button>
       <button class="nav-btn" id="nav-relatorio" onclick="showPage('relatorio')">
         <div class="nav-ic"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-        <span class="nav-lbl">Relatório Mensal</span>
+        <span class="nav-lbl">Evolução</span>
       </button>
       <button class="nav-btn" id="nav-metas" onclick="showPage('metas')">
         <div class="nav-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
@@ -547,34 +560,36 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <!-- MAIN -->
 <div class="main">
   <div class="topbar">
-    <!-- Linha 1: Logo + slogan + ícones -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div style="display:flex;align-items:center;gap:9px;">
-        <svg width="26" height="26" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#mon-tb)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="mon-tb" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+    <!-- ZONA ESQUERDA: sync + logo -->
+    <div class="tb-left">
+      <div id="sync-status" title="Sincronizado" style="width:7px;height:7px;border-radius:50%;background:#22C55E;transition:background .3s;margin-top:1px;"></div>
+      <div class="tb-logo-row">
+        <svg width="22" height="22" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#mon-tb)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="mon-tb" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
         <div>
-          <div style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1;">Monetra</div>
-          <div style="font-size:7.5px;color:rgba(255,255,255,.32);font-weight:500;">Sua vida financeira em equilíbrio.</div>
+          <div class="tb-logo-name">Monetra</div>
+          <div class="tb-logo-slogan">Sua vida financeira<br>em equilíbrio.</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span id="sync-status" style="font-size:.7rem;color:rgba(255,255,255,.7);font-weight:700;"></span>
-        <button onclick="toggleMobile()" id="btn-layout" title="Alternar layout" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
-        </button>
-        <button onclick="toggleTema()" id="btn-tema" title="Tema" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
-        </button>
-        <div id="topbar-actions" style="display:flex;align-items:center;gap:6px;"></div>
-      </div>
     </div>
-    <!-- Linha 2: Saudação / Título da página -->
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;">
-      <div>
-        <div id="topbar-greeting" style="font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1;">Olá, Carlos.</div>
-        <div id="topbar-sub" style="font-size:8px;color:rgba(255,255,255,.3);margin-top:3px;font-weight:500;"></div>
-      </div>
-      <div id="topbar-right"></div>
+    <!-- ZONA CENTRAL: nome da página -->
+    <div class="tb-center">
+      <div class="tb-page-name" id="topbar-greeting">LANÇAMENTOS</div>
     </div>
+    <!-- ZONA DIREITA: ícones + mês -->
+    <div class="tb-right">
+      <div class="tb-icon-row">
+        <button onclick="toggleMobile()" id="btn-layout" title="Alternar layout" class="tb-icon-btn">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </button>
+        <button onclick="toggleTema()" id="btn-tema" title="Tema claro/escuro" class="tb-icon-btn">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+        </button>
+      </div>
+      <div class="tb-mes" id="topbar-mes"></div>
+    </div>
+    <div id="topbar-actions" style="display:none;"></div>
+    <div id="topbar-sub" style="display:none;"></div>
+    <div id="topbar-right" style="display:none;"></div>
   </div>
   <div class="content">
 
@@ -887,12 +902,12 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
   </button>
   <button class="mob-nav-btn" id="mn-prestacao" onclick="showPage('prestacao')">
     <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-    Prestação
+    Fechamento
   </button>
   <button id="mob-fab" onclick="mobFabClick()">+</button>
   <button class="mob-nav-btn" id="mn-relatorio" onclick="showPage('relatorio')">
     <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    Relatório
+    Evolução
   </button>
   <button class="mob-nav-btn" id="mn-mais" onclick="toggleMobMenu()">
     <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
@@ -972,50 +987,6 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 
 </div>
 
-  <!-- Logo -->
-  <div style="width:72px;height:72px;background:var(--teal);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;color:#fff;margin-bottom:16px;box-shadow:0 4px 24px rgba(0,0,0,.3);">GF</div>
-  <div style="color:#fff;font-size:1.1rem;font-weight:900;letter-spacing:.02em;margin-bottom:4px;">Gestão Financeira</div>
-  <div style="color:rgba(255,255,255,.6);font-size:.75rem;font-weight:600;margin-bottom:40px;">FAMILIAR</div>
-
-  <!-- Campo de senha -->
-  <div style="width:100%;max-width:320px;">
-    <div style="background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-      <input type="text" autocomplete="off" style="-webkit-text-security:disc;" id="lock-senha" placeholder="Digite sua senha" autocomplete="off"
-        style="border:none;background:transparent;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:600;color:#fff;width:100%;outline:none;"
-        onkeydown="if(event.key==='Enter')desbloquear()"
-        placeholder="Digite sua senha">
-    </div>
-    <div id="lock-erro" style="display:none;color:#ff6b6b;font-size:.82rem;text-align:center;margin-bottom:12px;font-weight:700;">Senha incorreta</div>
-
-    <!-- Botão desbloquear -->
-    <button onclick="desbloquear()" style="width:100%;background:var(--teal);color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;margin-bottom:12px;box-shadow:0 4px 16px rgba(105,240,174,.3);">
-      Desbloquear
-    </button>
-
-    <!-- Botão biometria -->
-    <button id="btn-biometria" onclick="desbloquearBiometria()" style="width:100%;background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.25);border-radius:12px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/>
-        <path d="M8 12c0-2.21 1.79-4 4-4s4 1.79 4 4"/>
-        <path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
-        <path d="M2 12C2 6.48 6.48 2 12 2s10 4.48 10 10"/>
-        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-      </svg>
-      Usar biometria
-    </button>
-
-    <div id="lock-bio-status" style="color:rgba(255,255,255,.6);font-size:.75rem;text-align:center;margin-top:10px;"></div>
-  </div>
-
-  <!-- Nota sem senha -->
-  <div id="lock-no-senha" style="display:none;margin-top:20px;text-align:center;">
-    <div style="color:rgba(255,255,255,.7);font-size:.82rem;margin-bottom:12px;">Nenhuma senha configurada</div>
-    <button onclick="entrarSemSenha()" style="background:var(--green-acc);color:var(--teal-dark);border:none;border-radius:10px;padding:12px 24px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;">
-      Entrar no App
-    </button>
-  </div>
-</div>
 
 <div class="toast" id="toast"></div>
 <input type="file" id="import-input" accept=".json" style="display:none" onchange="importarDados(this)">
@@ -1029,7 +1000,7 @@ firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
 const DOC_REF=db.collection('dados').doc('principal');
 let _syncTimer=null;
-function showSyncStatus(ok,msg=''){const el=document.getElementById('sync-status');if(!el)return;el.textContent=ok?'☁️ Salvo':'⚠️ '+msg;el.style.color=ok?'#50c878':'#e8c547';}
+function showSyncStatus(ok,msg=''){const el=document.getElementById('sync-status');if(!el)return;el.style.background=ok?'#22C55E':'#6B7280';el.title=ok?'Salvo':'Offline'+(msg?' – '+msg:'');}
 function migrarDados(){
   const cats50=['Combustível','Estacionamento','Carro - Combustível','Carro - Estacionamento'];
   S.categorias=(S.categorias||[]).map(c=>typeof c==='string'?{nome:c,meia:cats50.includes(c)}:{nome:c.nome||'',meia:!!c.meia}).filter(c=>c.nome);
@@ -1150,25 +1121,15 @@ function showPage(p){
     b.classList.toggle('active',b.id==='nav-'+p);
   });
   closeMobMenu();
-  const titles={lancamentos:'LANÇAMENTOS',prestacao:'PRESTAÇÃO DE CONTAS',relatorio:'RELATÓRIO MENSAL',metas:'METAS',categorias:'CATEGORIAS',cartoes:'CARTÕES',pessoas:'PESSOAS',painel:'PAINEL'};
+  const titles={lancamentos:'LANÇAMENTOS',prestacao:'FECHAMENTO',relatorio:'EVOLUÇÃO',metas:'METAS',categorias:'CATEGORIAS',cartoes:'CARTÕES',pessoas:'PESSOAS',painel:'PAINEL'};
   // Atualizar topbar: linha 2 muda por página
   const greetEl=document.getElementById('topbar-greeting');
   const subEl=document.getElementById('topbar-sub');
   const rightEl=document.getElementById('topbar-right');
   const actionsEl=document.getElementById('topbar-actions');
-  if(greetEl && subEl && rightEl){
-    if(p==='lancamentos'){
-      greetEl.textContent='Olá, Carlos.';
-      greetEl.style.cssText='font-size:20px;font-weight:800;color:#fff;letter-spacing:-.4px;line-height:1;';
-      subEl.textContent='';
-      rightEl.innerHTML='<span style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.18);border-radius:7px;padding:3px 9px;font-size:8px;font-weight:700;color:#22C55E;letter-spacing:.08em;text-transform:uppercase;">'+getMesLabel()+'</span>';
-    } else {
-      greetEl.textContent=(titles[p]||p).toUpperCase();
-      greetEl.style.cssText='font-size:17px;font-weight:800;color:#fff;letter-spacing:-.2px;line-height:1;';
-      subEl.textContent=getMesLabel();
-      rightEl.innerHTML='';
-    }
-  }
+  if(greetEl) greetEl.textContent=(titles[p]||p).toUpperCase();
+  const mesEl=document.getElementById('topbar-mes');
+  if(mesEl) mesEl.textContent=getMesLabel();
   if(actionsEl){
     let btn='';
     if(p==='lancamentos') btn='<button class="btn btn-primary" onclick="openModalLanc()">+ Lançamento</button>';
@@ -2654,71 +2615,109 @@ function totalPessoaMesCartoes(pessoaId,mes,ano){
   return lancs.reduce((s,l)=>s+l.valor,0);
 }
 function renderGraficoComparativo(){
-  // Pessoas alvo: carlos, queila, cq
   const alvos=S.pessoas.filter(p=>['carlos','queila','cq'].includes(p.tipo));
   if(alvos.length===0) return '';
-
-  // 3 meses: atual e 2 anteriores
-  const meses=[
-    getMesAnterior(S.mes,S.ano,2),
-    getMesAnterior(S.mes,S.ano,1),
-    {mes:S.mes,ano:S.ano}
-  ];
+  const meses=[getMesAnterior(S.mes,S.ano,2),getMesAnterior(S.mes,S.ano,1),{mes:S.mes,ano:S.ano}];
   const mesLabels=meses.map(m=>MESES[m.mes].slice(0,3)+'/'+String(m.ano).slice(2));
-
-  // Calcular totais
-  const dados=alvos.map(p=>({
-    nome:p.nome,
-    cor:p.cor,
-    vals:meses.map(m=>totalPessoaMesCartoes(p.id,m.mes,m.ano))
-  }));
-
-  // Valor máximo para escala
+  const dados=alvos.map(p=>({nome:p.nome,cor:p.cor,vals:meses.map(m=>totalPessoaMesCartoes(p.id,m.mes,m.ano))}));
+  const totais=meses.map((_,mi)=>dados.reduce((s,p)=>s+p.vals[mi],0));
+  const totalAtual=totais[2], totalAnt=totais[1];
+  const diff=totalAnt>0?((totalAtual-totalAnt)/totalAnt*100):0;
+  const media=totais.reduce((s,v)=>s+v,0)/3;
+  const diffColor=diff>=0?'#4ade80':'#f87171';
+  const diffArrow=diff>=0?'▲':'▼';
   const maxVal=Math.max(...dados.flatMap(d=>d.vals),1);
 
-  // Renderizar barras
-  const barW=100/(alvos.length*3+alvos.length+1); // largura relativa
-  const GAP=1.5;
-  const GAPP=4;
+  function hex2rgba(c,a){const r=parseInt(c.slice(1,3),16),g=parseInt(c.slice(3,5),16),b=parseInt(c.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+  function fmtK(v){return v>=1000?(v/1000).toFixed(1)+'k':fmt(v);}
 
-  function barColor(cor,alpha){
-    // converter hex para rgba
-    const r=parseInt(cor.slice(1,3),16);
-    const g=parseInt(cor.slice(3,5),16);
-    const b=parseInt(cor.slice(5,7),16);
-    return`rgba(${r},${g},${b},${alpha})`;
-  }
+  const alphas=[0.2,0.5,1];
 
-  const grafHTML=dados.map((p,pi)=>{
+  // Barras verticais por pessoa
+  const pessoasHTML=dados.map((p,pi)=>{
     const bars=p.vals.map((v,mi)=>{
-      const perc=maxVal>0?(v/maxVal*100):0;
-      const isCurrent=mi===2;
-      return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div style="font-family:'DM Mono',monospace;font-size:.58rem;color:var(--ink2);white-space:nowrap;">${fmt(v)}</div>
-        <div style="width:100%;background:var(--surface2);border-radius:4px 4px 0 0;height:120px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:${Math.max(perc,2)}%;background:${isCurrent?p.cor:barColor(p.cor,0.45)};border-radius:4px 4px 0 0;transition:height .4s;min-height:4px;"></div>
+      const pct=maxVal>0?(v/maxVal*100):2;
+      const isCur=mi===2;
+      return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+        <div style="font-size:.42rem;font-weight:${isCur?'700':'600'};color:${isCur?'#4A4D44':'#9a9d94'};white-space:nowrap;">${fmtK(v)}</div>
+        <div style="width:100%;background:var(--surface2);border-radius:3px 3px 0 0;height:80px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:${Math.max(pct,3).toFixed(1)}%;background:${hex2rgba(p.cor,alphas[mi])};border-radius:3px 3px 0 0;transition:height .4s;min-height:3px;${isCur?'outline:1.5px solid '+p.cor+';outline-offset:-1px;':''}"></div>
         </div>
-        <div style="font-family:'DM Mono',monospace;font-size:.6rem;color:${isCurrent?'var(--ink)':'var(--ink3)'};">${mesLabels[mi]}</div>
       </div>`;
     }).join('');
-    return`<div style="flex:1;background:var(--surface2);border:1px solid ${p.cor}33;border-radius:10px;padding:14px 12px;">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
-        <div style="width:10px;height:10px;border-radius:50%;background:${p.cor};flex-shrink:0;"></div>
-        <span style="font-size:.8rem;font-weight:600;">${p.nome}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:.78rem;color:${p.cor};margin-left:auto;">${fmt(p.vals[2])}</span>
+    return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;">
+      <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:80px;">${bars}</div>
+      <div style="margin-top:5px;display:flex;align-items:center;gap:3px;">
+        <div style="width:6px;height:6px;border-radius:50%;background:${p.cor};flex-shrink:0;"></div>
+        <div style="font-size:.5rem;font-weight:700;color:var(--ink);">${p.nome}</div>
       </div>
-      <div style="display:flex;gap:6px;align-items:flex-end;">${bars}</div>
+    </div>`;
+  });
+
+  // Separadores entre grupos
+  const sepHTML='<div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;"></div>';
+  const grafHTML=pessoasHTML.join(sepHTML);
+
+  // Legenda meses
+  const legendaHTML=`<div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:8px;">
+    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:#9a9d94;font-weight:600;"><div style="width:10px;height:3px;border-radius:2px;background:rgba(100,100,100,.2);"></div>${mesLabels[0]}</div>
+    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:#9a9d94;font-weight:600;"><div style="width:10px;height:3px;border-radius:2px;background:rgba(100,100,100,.45);"></div>${mesLabels[1]}</div>
+    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:var(--ink);font-weight:700;"><div style="width:10px;height:3px;border-radius:2px;background:#0D1108;"></div>${mesLabels[2]} ◀</div>
+  </div>`;
+
+  // Cartões com barras horizontais
+  const lancsAtual=getLancsMes();
+  const cartoesAtivos=S.cartoes.filter(c=>lancsAtual.some(l=>l.cartaoId===c.id));
+  const maxCart=Math.max(...cartoesAtivos.map(c=>lancsAtual.filter(l=>l.cartaoId===c.id).reduce((s,l)=>s+l.valor,0)),1);
+  const cartoesHTML=cartoesAtivos.map(c=>{
+    const v=lancsAtual.filter(l=>l.cartaoId===c.id).reduce((s,l)=>s+l.valor,0);
+    const pct=v/maxCart*100;
+    return`<div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:${c.cor};flex-shrink:0;"></div>
+      <div style="font-size:.6rem;font-weight:700;color:var(--ink);flex:1;">${c.nome}</div>
+      <div style="flex:2;background:var(--surface2);border-radius:3px;height:5px;overflow:hidden;">
+        <div style="width:${pct.toFixed(1)}%;height:100%;background:${c.cor};border-radius:3px;"></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:.52rem;color:var(--ink2);width:72px;text-align:right;white-space:nowrap;flex-shrink:0;">${fmt(v)}</div>
     </div>`;
   }).join('');
 
-  return`<div class="pc-sec" style="margin-top:16px;margin-bottom:0;">
-    <div class="pc-sec-head" style="cursor:default;"><span class="psh-icon">📈</span><h3>Comparativo 3 Meses</h3><span class="psh-sub">${mesLabels.join(' · ')}</span></div>
-    <div class="pc-sec-body">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        ${grafHTML}
+  return`<div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="background:#0D3526;border:1px solid rgba(34,197,94,.1);border-radius:14px;padding:15px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+        <div>
+          <div style="font-size:.45rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:4px;">Total · ${MESES[S.mes]+' '+S.ano}</div>
+          <div style="font-size:1.4rem;font-weight:800;color:#fff;letter-spacing:-.5px;line-height:1;">${fmt(totalAtual)}</div>
+        </div>
+        <div style="background:rgba(34,197,94,.14);border:1px solid rgba(34,197,94,.22);border-radius:20px;padding:3px 9px;font-size:.48rem;font-weight:700;color:${diffColor};white-space:nowrap;">${diffArrow} ${Math.abs(diff).toFixed(1)}% vs ${mesLabels[1]}</div>
       </div>
-      <div style="margin-top:10px;font-size:.72rem;color:var(--ink3);">Barra sólida = mês atual · Barra clara = meses anteriores</div>
+      <div style="display:flex;gap:6px;">
+        <div style="flex:1;background:rgba(255,255,255,.05);border-radius:8px;padding:7px 9px;">
+          <div style="font-size:.4rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:3px;">${mesLabels[0]}</div>
+          <div style="font-size:.75rem;font-weight:800;color:rgba(255,255,255,.7);">${fmt(totais[0])}</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.05);border-radius:8px;padding:7px 9px;">
+          <div style="font-size:.4rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:3px;">${mesLabels[1]}</div>
+          <div style="font-size:.75rem;font-weight:800;color:rgba(255,255,255,.7);">${fmt(totais[1])}</div>
+        </div>
+        <div style="flex:1;background:rgba(255,255,255,.05);border-radius:8px;padding:7px 9px;">
+          <div style="font-size:.4rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:3px;">Média</div>
+          <div style="font-size:.75rem;font-weight:800;color:rgba(255,255,255,.7);">${fmt(media)}</div>
+        </div>
+      </div>
     </div>
+    <div style="background:var(--surface);border-radius:14px;padding:13px;border:1px solid var(--border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div style="font-size:.68rem;font-weight:800;color:var(--ink);">Por Pessoa · 3 meses</div>
+      </div>
+      ${legendaHTML}
+      <div style="display:flex;gap:6px;align-items:stretch;">${grafHTML}</div>
+      <div style="margin-top:8px;padding-top:7px;border-top:1px solid var(--border);font-size:.44rem;color:var(--ink3);text-align:center;">Barra mais escura = mês atual (${mesLabels[2]})</div>
+    </div>
+    ${cartoesAtivos.length>0?`<div style="background:var(--surface);border-radius:14px;padding:13px;border:1px solid var(--border);">
+      <div style="font-size:.68rem;font-weight:800;color:var(--ink);margin-bottom:9px;">Por Cartão · ${mesLabels[2]}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">${cartoesHTML}</div>
+    </div>`:''}
   </div>`;
 }
 
@@ -2870,8 +2869,7 @@ function renderRelMensal(){
       }).join('')}`;
   }
 
-  el.innerHTML=`
-    ${renderGraficoComparativo()}`;
+  el.innerHTML=renderGraficoComparativo();
 }
 
 function gerarRelCat(){
@@ -2942,26 +2940,20 @@ function getMoneyVal(input){
 let _bioCredential = null;
 
 function mostrarLock(){
-  const lock = document.getElementById('lock-screen');
+  const lock=document.getElementById('lock-screen');
   if(!lock) return;
-  lock.style.display = 'flex';
-  document.getElementById('lock-erro').style.display = 'none';
-  document.getElementById('lock-senha').value = '';
-  // verificar se tem senha configurada
-  if(!S.senha){
-    document.getElementById('lock-no-senha').style.display = 'block';
-    document.getElementById('lock-senha').parentElement.style.display = 'none';
-    document.querySelector('[onclick="desbloquear()"]').style.display = 'none';
-    document.getElementById('btn-biometria').style.display = 'none';
-  } else {
-    document.getElementById('lock-no-senha').style.display = 'none';
-    document.getElementById('lock-senha').parentElement.style.display = 'flex';
-    document.querySelector('[onclick="desbloquear()"]').style.display = 'block';
-    // verificar suporte a biometria
-    verificarBiometria();
-    // foco no campo
-    setTimeout(()=>document.getElementById('lock-senha').focus(), 300);
-  }
+  // sem senha: entrar direto
+  if(!S.senha){ fecharLock(); return; }
+  lock.style.display='block';
+  // sempre começa na etapa 1
+  const s1=document.getElementById('lock-step1');
+  const s2=document.getElementById('lock-step2');
+  if(s1) s1.style.display='flex';
+  if(s2) s2.style.display='none';
+  const erroEl=document.getElementById('lock-erro');
+  if(erroEl) erroEl.style.display='none';
+  const senhaEl=document.getElementById('lock-senha');
+  if(senhaEl) senhaEl.value='';
 }
 
 function fecharLock(){
@@ -2971,6 +2963,8 @@ function fecharLock(){
   const s2=document.getElementById('lock-step2');
   if(s1) s1.style.display='flex';
   if(s2) s2.style.display='none';
+  const senhaEl=document.getElementById('lock-senha');
+  if(senhaEl) senhaEl.value='';
 }
 
 function desbloquear(){
@@ -3183,13 +3177,13 @@ if('serviceWorker' in navigator){
 
     <button class="menu-mob-item" onclick="showPage('prestacao');closeMobMenu();">
       <div class="menu-mob-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
-      <span class="menu-mob-lbl">Prestação de Contas</span>
+      <span class="menu-mob-lbl">Fechamento</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
 
     <button class="menu-mob-item" onclick="showPage('relatorio');closeMobMenu();">
       <div class="menu-mob-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
-      <span class="menu-mob-lbl">Relatórios</span>
+      <span class="menu-mob-lbl">Evolução</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
 
