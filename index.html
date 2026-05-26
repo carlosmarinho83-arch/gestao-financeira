@@ -41,10 +41,10 @@ body.dark-mode {
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
 
-/* ══ LAYOUT ══ */
+/* == LAYOUT == */
 .app { display:flex; min-height:100vh; }
 
-/* ══ SIDEBAR ══ */
+/* == SIDEBAR == */
 .sidebar {
   width:240px; position:fixed; top:0; left:0; bottom:0;
   background:#0A1F1A;
@@ -144,7 +144,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .btn-sb:hover { background:rgba(255,255,255,.2); color:#fff; }
 #mobile-lbl { display:none; }
 
-/* ══ MAIN ══ */
+/* == MAIN == */
 .main { margin-left:240px; flex:1; display:flex; flex-direction:column; min-width:0; }
 
 /* Topbar */
@@ -361,7 +361,7 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 .modal input[type=number]::-webkit-outer-spin-button { -webkit-appearance:none; margin:0; }
 .modal input[type=number] { -moz-appearance:textfield; }
 
-/* ══ MOBILE MODE ══ */
+/* == MOBILE MODE == */
 body.mobile-mode .sidebar { display:none!important; }
 body.mobile-mode .main { margin-left:0; }
 body.mobile-mode .topbar { padding:8px 14px; position:fixed; top:0; left:0; right:0; z-index:100; height:64px; }
@@ -922,9 +922,9 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <div id="mob-cards-global" style="display:none"></div>
 
 
-<!-- ═══════════════════════════════ -->
+<!-- =============================== -->
 <!-- TELA DE BLOQUEIO               -->
-<!-- ═══════════════════════════════ -->
+<!-- =============================== -->
 <div id="lock-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:#0A1F1A;">
 
   <!-- ETAPA 1: Avatar + Entrar -->
@@ -992,9 +992,9 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 <input type="file" id="import-input" accept=".json" style="display:none" onchange="importarDados(this)">
 
 <script>
-// ══════════════════════════════════════════
+// ==========================================
 // FIREBASE
-// ══════════════════════════════════════════
+// ==========================================
 const firebaseConfig={apiKey:"AIzaSyCLNSdUgaMIzfI2XKk7JYwvh89-c3TXmsc",authDomain:"gestao-financeira-marinho.firebaseapp.com",projectId:"gestao-financeira-marinho",storageBucket:"gestao-financeira-marinho.firebasestorage.app",messagingSenderId:"194826109560",appId:"1:194826109560:web:c992431d2ae2b8bafb638d"};
 firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore();
@@ -1019,9 +1019,9 @@ function loadFromFirebase(cb){
     cb();
   }).catch(()=>{showSyncStatus(false,'Offline');load();cb();});
 }
-// ══════════════════════════════════════════
+// ==========================================
 // ESTADO
-// ══════════════════════════════════════════
+// ==========================================
 const SK = 'cartao_v6';
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
@@ -1099,9 +1099,9 @@ function om(id){document.getElementById(id).classList.add('show');}
 function cm(id){document.getElementById(id).classList.remove('show');}
 function cio(e,id){if(e.target===document.getElementById(id))cm(id);}
 
-// ══════════════════════════════════════════
+// ==========================================
 // NAVEGAÇÃO
-// ══════════════════════════════════════════
+// ==========================================
 let pagina='lancamentos';
 function showPage(p){
   ['lancamentos','prestacao','relatorio','metas','categorias','cartoes','pessoas','painel'].forEach(x=>{
@@ -1160,9 +1160,9 @@ function onMesChange(){
   save();loadSwileInput();showPage(pagina);
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // LANÇAMENTOS
-// ══════════════════════════════════════════
+// ==========================================
 function openModalLanc(editId=null){
   document.getElementById('ml-title').textContent=editId?'Editar Lançamento':'Novo Lançamento';
   document.getElementById('l-id').value=editId||'';
@@ -1340,7 +1340,7 @@ function renderStats(){
     </div>`;
   }
 
-  // ── FILEIRA 1: Sicoob (total) + Credicard ──
+  // -- FILEIRA 1: Sicoob (total) + Credicard --
   const sicoobs=S.cartoes.filter(c=>c.nome.toLowerCase().includes('sicoob'));
   const sicoobCor=sicoobs.length?sicoobs[0].cor:'#1E88E5';
   const sicoobTotal=sicoobs.reduce((s,c)=>s+(porCartao[c.id]||0),0);
@@ -1352,7 +1352,7 @@ function renderStats(){
   const f1=card(sicoobCor,'Sicoob',fmt(sicoobTotal))
           +card(credicardCor,'Credicard',fmt(credicardTotal));
 
-  // ── FILEIRA 2: Carlos, Queila, Família, Techcard (por tipo/nome, cores do cadastro) ──
+  // -- FILEIRA 2: Carlos, Queila, Família, Techcard (por tipo/nome, cores do cadastro) --
   const ordemTipos=['carlos','queila','cq'];
   const pessoasF2=[];
 
@@ -1429,9 +1429,9 @@ function renderTabela(){
   }).join('');
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // CARTÕES
-// ══════════════════════════════════════════
+// ==========================================
 function openModalCartao(editId=null){
   document.getElementById('mc-title').textContent=editId?'Editar Cartão':'Novo Cartão';
   document.getElementById('c-id').value=editId||'';
@@ -1476,9 +1476,9 @@ function renderCartoes(){
   }).join('');
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // PESSOAS
-// ══════════════════════════════════════════
+// ==========================================
 function openModalPessoa(editId=null){
   document.getElementById('mp-title').textContent=editId?'Editar Pessoa':'Nova Pessoa';
   document.getElementById('p-id').value=editId||'';
@@ -1520,9 +1520,9 @@ function renderPessoas(){
     </div>`).join('');
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // CONFIG QUEILA POR MÊS
-// ══════════════════════════════════════════
+// ==========================================
 function getQueilaCfg(){
   const k=mesKey();
   if(!S.queilaConfig[k]) S.queilaConfig[k]={swileCredito:'',cartaoQuilaCredito:''};
@@ -1543,9 +1543,9 @@ function loadSwileInput(){
   if(elMob) elMob.value=val;
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // PRESTAÇÃO DE CONTAS
-// ══════════════════════════════════════════
+// ==========================================
 let pcPessoa=null;
 function renderPrestacao(){
   const lancs=getLancsMes();
@@ -1933,10 +1933,10 @@ function calcQueila(){
 
 function rl(desc,val,cls=''){return`<div class="rl"><span class="rd">${desc}</span><span class="rv ${cls}">${val}</span></div>`;}
 
-// ══════════════════════════════════════════
+// ==========================================
 // RELATÓRIOS
-// ══════════════════════════════════════════
-const SEP='─'.repeat(46);
+// ==========================================
+const SEP='-'.repeat(46);
 function gerarRelNormal(pessoaId){
   const p=getPessoa(pessoaId);
   const lancs=getLancsMes().filter(l=>l.pessoaId===pessoaId);
@@ -1948,7 +1948,7 @@ function gerarRelNormal(pessoaId){
   const totalFamMeia=lancsFamMeia.reduce((s,l)=>s+l.valor*0.5,0);
   const totalGeral=total+totalFamMeia;
   const mes=getMesLabel();
-  const SEP2='─'.repeat(44);
+  const SEP2='-'.repeat(44);
   let txt=`PRESTAÇÃO DE CONTAS — ${mes.toUpperCase()}\n${SEP2}\n\n👤 DESPESAS DE ${p.nome.toUpperCase()}\n\n`;
   lancs.forEach(l=>{const parc=l.parcelado?` (${l.pa}/${l.pt})`:'';const rec=l.recorrente?' ↻':'';txt+=`  ${l.desc}${parc}${rec}: ${fmt(l.valor)}\n`;});
   if(lancsFamMeia.length>0){
@@ -1958,7 +1958,7 @@ function gerarRelNormal(pessoaId){
   }
   txt+=`\n${SEP2}\n`;
   if(lancsFamMeia.length>0) txt+=`  Lançamentos pessoais:     ${fmt(total)}\n  50% despesas Família:     ${fmt(totalFamMeia)}\n`;
-  txt+=`  ★ ${p.nome.toUpperCase()} — TOTAL:   ${fmt(totalGeral)}\n${SEP2}\n`;
+  txt+=`  * ${p.nome.toUpperCase()} — TOTAL:   ${fmt(totalGeral)}\n${SEP2}\n`;
   document.getElementById('rel-titulo').textContent=`${p.nome} — ${mes}`;
   document.getElementById('rel-texto').textContent=txt;
   om('modal-rel');
@@ -1977,11 +1977,11 @@ function gerarRelQueila(modo='completo'){
   const lancsCQItau=cartaoQueila?lancsCQ.filter(l=>l.cartaoId===cartaoQueila.id):[];
   const lancsCQCarlos=lancsCQ.filter(l=>!lancsCQItau.includes(l));
   const mes=getMesLabel();
-  const SEP2='─'.repeat(44);
+  const SEP2='-'.repeat(44);
 
   if(modo==='simples'){
     const mesUpper=MESES[S.mes].toUpperCase()+'/'+S.ano;
-    const SEP3='─'.repeat(25);
+    const SEP3='-'.repeat(25);
     let txt='PRESTAÇÃO DE CONTAS\n';
     txt+=mesUpper+' - *QUEILA*\n\n';
     txt+='📦 DESPESAS FAMÍLIA\n\n';
@@ -2035,16 +2035,16 @@ function gerarRelQueila(modo='completo'){
     txt+='💰 TOTAL A PAGAR\n\n';
     txt+=`Despesas da casa: ${fmtW(c.despCasaLiq)}\n`;
     if(c.totalPessoalQueila>0) txt+=`Despesas pessoais: ${fmtW(c.totalPessoalQueila)}\n`;
-    txt+=`\n★ *QUEILA PAGA A CARLOS: ${fmtW(c.totalQueila)}*\n`;
+    txt+=`\n* *QUEILA PAGA A CARLOS: ${fmtW(c.totalQueila)}*\n`;
 
     document.getElementById('rel-titulo').textContent=`Queila — ${mes} (simplificado)`;
     document.getElementById('rel-texto').textContent=txt;
     om('modal-rel');
     return;
   }
-    // ── FORMATO COMPLETO ──
+    // -- FORMATO COMPLETO --
   const mesUpper2=MESES[S.mes].toUpperCase()+'/'+S.ano;
-  const SEP4='─'.repeat(25);
+  const SEP4='-'.repeat(25);
   let txt='PRESTAÇÃO DE CONTAS\n';
   txt+=mesUpper2+' - *QUEILA*\n\n';
   txt+='📦 DESPESAS FAMÍLIA\n\n';
@@ -2119,7 +2119,7 @@ function gerarRelQueila(modo='completo'){
   txt+='💰 TOTAL A PAGAR\n\n';
   txt+=`Despesas da casa: ${fmtW(c.despCasaLiq)}\n`;
   if(c.totalPessoalQueila>0) txt+=`Despesas pessoais: ${fmtW(c.totalPessoalQueila)}\n`;
-  txt+=`\n★ *QUEILA PAGA A CARLOS: ${fmtW(c.totalQueila)}*\n`;
+  txt+=`\n* *QUEILA PAGA A CARLOS: ${fmtW(c.totalQueila)}*\n`;
 
   document.getElementById('rel-titulo').textContent=`Queila — ${mes} (completo)`;
   document.getElementById('rel-texto').textContent=txt;
@@ -2147,9 +2147,9 @@ function copiarFallback(txt){
   document.body.removeChild(ta);
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // VIRAR MÊS
-// ══════════════════════════════════════════
+// ==========================================
 function virarMes(){
   let pm=S.mes+1,pa=S.ano;if(pm>11){pm=0;pa++;}
   document.getElementById('prox-mes-lbl').textContent=MESES[pm]+'/'+pa;
@@ -2192,9 +2192,9 @@ function confirmarVirar(){
   toast(`Virado para ${MESES[pm]}/${pa} ✓`,'success');
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // EXPORTAR / IMPORTAR
-// ══════════════════════════════════════════
+// ==========================================
 function exportarDados(){
   const payload={_versao:'cartao_v6',_exportado:new Date().toISOString(),...S};
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
@@ -2241,9 +2241,9 @@ function importarDados(input){
   reader.readAsText(file);
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // SENHA
-// ══════════════════════════════════════════
+// ==========================================
 let _senhaAcao=null;
 function abrirSenhaModal(acao){
   if(acao==='config-senha'){
@@ -2300,9 +2300,9 @@ function executarLimparTudo(){
   toast('App limpo ✓','success');
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // MOBILE MODE
-// ══════════════════════════════════════════
+// ==========================================
 function mobFabClick(){
   if(pagina==='metas') openModalMeta();
   else if(pagina==='cartoes') openModalCartao();
@@ -2469,9 +2469,9 @@ function applyMobileMode(){
   if(elMob) elMob.value=val;
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // CATEGORIAS
-// ══════════════════════════════════════════
+// ==========================================
 function openModalCat(origIdx=null){
   document.getElementById('cat-titulo').textContent=origIdx!==null?'Editar Categoria':'Nova Categoria';
   document.getElementById('cat-edit-idx').value=origIdx!==null?origIdx:'';
@@ -2526,9 +2526,9 @@ function renderCategorias(){
   '</div>';
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // METAS
-// ══════════════════════════════════════════
+// ==========================================
 function openModalMeta(editId=null){
   const existing=editId?S.metas.find(m=>m.id===editId):null;
   document.getElementById('meta-titulo').textContent=editId?'Editar Meta':'Nova Meta';
@@ -2602,9 +2602,9 @@ function renderMetas(){
   </div>`;
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // RELATÓRIO MENSAL POR CATEGORIA
-// ══════════════════════════════════════════
+// ==========================================
 function getMesAnterior(m,a,n){
   let mes=m,ano=a;
   for(let i=0;i<n;i++){mes--;if(mes<0){mes=11;ano--;}}
@@ -2739,13 +2739,13 @@ function renderPainel(){
     </div>`;
   }
 
-  // ── TOTAL GERAL ──
+  // -- TOTAL GERAL --
   const tagTotal=`<div class="stat-card" style="border-left:3px solid var(--teal);grid-column:1/-1;">
     <div class="stat-lbl">Total do Mês (c/ Swile)</div>
     <div class="stat-val accent">${fmt(total+swileCredito)}</div>
   </div>`;
 
-  // ── CARTÕES ──
+  // -- CARTÕES --
   // Sicoob: total + por dígito
   const sicoobs=S.cartoes.filter(c=>c.nome.toLowerCase().includes('sicoob'));
   const sicoobCor=sicoobs.length?sicoobs[0].cor:'#1E88E5';
@@ -2790,7 +2790,7 @@ function renderPainel(){
   // Crédito Swile
   tagsCartoes+=tag('#43A047','Crédito Swile',swileCredito);
 
-  // ── PESSOAS — todas, na ordem do cadastro, R$0,00 se sem lançamento ──
+  // -- PESSOAS — todas, na ordem do cadastro, R$0,00 se sem lançamento --
   const tagsPessoas=S.pessoas.map(p=>tag(p.cor||'#888',p.nome,porPessoa[p.id]||0)).join('');
 
   el.innerHTML=`
@@ -2879,7 +2879,7 @@ function gerarRelCat(){
   const swile=parseFloat(getQueilaCfg().swileCredito)||0;
   if(swile>0){porCat['Alimentação (+ Swile)']=(porCat['Alimentação']||0)+swile;delete porCat['Alimentação'];total+=swile;}
   const sorted=Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
-  const SEP='─'.repeat(40);
+  const SEP='-'.repeat(40);
   let txt=`RELATÓRIO MENSAL — ${getMesLabel().toUpperCase()}\n${SEP}\n\n`;
   sorted.forEach(([cat,val])=>{
     const perc=(val/total*100).toFixed(1);
@@ -2895,9 +2895,9 @@ function gerarRelCat(){
 }
 
 
-// ══════════════════════════════════════════
+// ==========================================
 // DIVISÃO DE LANÇAMENTOS
-// ══════════════════════════════════════════
+// ==========================================
 function addDivisao(){
   const lista=document.getElementById('divisao-lista');
   const idx=lista.querySelectorAll('.div-item').length;
@@ -2934,9 +2934,9 @@ function getMoneyVal(input){
   if(input.dataset.val) return parseFloat(input.dataset.val)||0;
   return parseFloat(input.value.replace(',','.'))||0;
 }
-// ══════════════════════════════════════════
+// ==========================================
 // BLOQUEIO / DESBLOQUEIO
-// ══════════════════════════════════════════
+// ==========================================
 let _bioCredential = null;
 
 function mostrarLock(){
@@ -3077,9 +3077,9 @@ async function cadastrarBiometria(){
   }
 }
 
-// ══════════════════════════════════════════
+// ==========================================
 // INIT
-// ══════════════════════════════════════════
+// ==========================================
 loadFromFirebase(()=>{
   // Detecção automática mobile/desktop
   S.mobileMode = window.innerWidth <= 768;
@@ -3120,9 +3120,9 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register(swUrl).catch(()=>{});
 }
 </script>
-<!-- ═══════════════════════════════════════ -->
+<!-- ======================================= -->
 <!-- MENU MOBILE — tela cheia estilo Sicoob -->
-<!-- ═══════════════════════════════════════ -->
+<!-- ======================================= -->
 <div id="mob-mais-menu" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:500;background:var(--bg);overflow-y:auto;">
 
   <!-- Header — mesmo estilo das outras páginas -->
