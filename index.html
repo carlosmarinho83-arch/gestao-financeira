@@ -3092,6 +3092,7 @@ loadFromFirebase(()=>{
   if(am) am.value=S.ano;
   loadSwileInput();
   if(!S.hasOwnProperty('ocultarFuturos'))S.ocultarFuturos=false;
+  if(!S.reembolsos)S.reembolsos=[];
   applyMobileMode();
   applyTema();
   applyFuturos();
@@ -3101,6 +3102,231 @@ loadFromFirebase(()=>{
 </script>
 <script>
 // Service Worker para PWA
+// ══════════════════════════════════════════
+// REEMBOLSOS
+// ══════════════════════════════════════════
+if(!S.reembolsos) S.reembolsos=[];
+
+function getRbTechcard(){
+  // Pegar todos os lancamentos com pessoa Techcard
+  const techcard=S.pessoas.find(p=>p.nome.toLowerCase().includes('techcard'));
+  if(!techcard) return [];
+  return S.lancamentos
+    .filter(l=>l.pessoaId===techcard.id)
+    .map(l=>{
+      // verificar se ja existe reembolso manual com mesmo lancamentoId
+      const jaExiste=S.reembolsos.find(r=>r.lancamentoId===l.id);
+      if(jaExiste) return null;
+      const c=getCartao(l.cartaoId);
+      const dataFmt=l.data?new Date(l.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
+      const parc=l.parcelado?` ${String(l.pa).padStart(2,'0')}/${String(l.pt).padStart(2,'0')}`:'';
+      return{
+        id:'tc_'+l.id,
+        lancamentoId:l.id,
+        desc:l.desc,
+        valor:l.valor,
+        data:l.data,
+        dataFmt:dataFmt+parc,
+        categoria:l.categoria||'',
+        obs:l.obs||'',
+        cartao:c?c.nome:'',
+        status:'cobrar',
+        auto:true,
+      };
+    }).filter(Boolean);
+}
+
+function abrirReembolsos(){
+  if(!S.reembolsos) S.reembolsos=[];
+  const el=document.getElementById('modal-reembolsos');
+  if(el){el.style.display='block';}
+  const lbl=document.getElementById('rb-mes-lbl');
+  if(lbl) lbl.textContent=getMesLabel();
+  renderReembolsos();
+}
+function fecharReembolsos(){
+  const el=document.getElementById('modal-reembolsos');
+  if(el) el.style.display='none';
+}
+
+function renderReembolsos(){
+  // Combinar: reembolsos manuais + lancamentos Techcard nao mapeados
+  const manuais=S.reembolsos||[];
+  const auto=getRbTechcard();
+  const todos=[...auto,...manuais].sort((a,b)=>(b.data||'').localeCompare(a.data||''));
+
+  // Resumo
+  const totCobrar=todos.filter(r=>r.status==='cobrar').reduce((s,r)=>s+r.valor,0);
+  const totCobrado=todos.filter(r=>r.status==='cobrado').reduce((s,r)=>s+r.valor,0);
+  const totRecebido=todos.filter(r=>r.status==='recebido').reduce((s,r)=>s+r.valor,0);
+
+  const resumoEl=document.getElementById('rb-resumo');
+  if(resumoEl) resumoEl.innerHTML=`
+    <div style="background:rgba(229,57,53,.06);border:1px solid rgba(229,57,53,.2);border-top:2.5px solid #E53935;border-radius:12px;padding:11px 12px;">
+      <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E53935;margin-bottom:4px;">A cobrar</div>
+      <div style="font-size:.82rem;font-weight:800;color:#E53935;font-variant-numeric:tabular-nums;">${fmt(totCobrar)}</div>
+    </div>
+    <div style="background:rgba(232,197,71,.08);border:1px solid rgba(232,197,71,.3);border-top:2.5px solid #E8C547;border-radius:12px;padding:11px 12px;">
+      <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#B8860B;margin-bottom:4px;">Cobrado</div>
+      <div style="font-size:.82rem;font-weight:800;color:#B8860B;font-variant-numeric:tabular-nums;">${fmt(totCobrado)}</div>
+    </div>
+    <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-top:2.5px solid #22C55E;border-radius:12px;padding:11px 12px;">
+      <div style="font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#16a34a;margin-bottom:4px;">Recebido</div>
+      <div style="font-size:.82rem;font-weight:800;color:#16a34a;font-variant-numeric:tabular-nums;">${fmt(totRecebido)}</div>
+    </div>`;
+
+  // Lista
+  const listaEl=document.getElementById('rb-lista');
+  if(!listaEl) return;
+  if(todos.length===0){
+    listaEl.innerHTML='<div class="empty-state"><div class="ei">💸</div><p>Nenhum reembolso encontrado.<br>Lançamentos da pessoa Techcard aparecem aqui automaticamente.</p></div>';
+    return;
+  }
+
+  const statusCor={cobrar:'#E53935',cobrado:'#E8C547',recebido:'#22C55E'};
+  const statusLabel={cobrar:'A cobrar',cobrado:'Cobrado',recebido:'Recebido'};
+  const statusBg={cobrar:'rgba(229,57,53,.1)',cobrado:'rgba(232,197,71,.15)',recebido:'rgba(34,197,94,.1)'};
+  const statusBorder={cobrar:'rgba(229,57,53,.25)',cobrado:'rgba(232,197,71,.35)',recebido:'rgba(34,197,94,.25)'};
+  const statusTxt={cobrar:'#E53935',cobrado:'#B8860B',recebido:'#16a34a'};
+
+  listaEl.innerHTML=todos.map(r=>{
+    const cor=statusCor[r.status]||'#888';
+    const isAuto=r.auto;
+    const dataFmt=r.dataFmt||(r.data?new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'');
+    const tags=[
+      isAuto?'<span style="font-size:.55rem;font-weight:700;background:rgba(96,144,232,.1);color:#6090e8;border:1px solid rgba(96,144,232,.25);border-radius:5px;padding:2px 7px;">Techcard</span>':'<span style="font-size:.55rem;font-weight:700;background:rgba(160,112,224,.1);color:#a070e0;border:1px solid rgba(160,112,224,.25);border-radius:5px;padding:2px 7px;">Manual</span>',
+      r.categoria?`<span style="font-size:.55rem;font-weight:600;color:#7A9E94;background:#F0F5F3;border-radius:5px;padding:2px 7px;">${r.categoria}</span>`:'',
+      dataFmt?`<span style="font-size:.55rem;font-weight:600;color:#7A9E94;background:#F0F5F3;border-radius:5px;padding:2px 7px;">${dataFmt}</span>`:'',
+    ].filter(Boolean).join('');
+
+    // Status select inline
+    const statusOpts=['cobrar','cobrado','recebido'].map(s=>`
+      <option value="${s}" ${r.status===s?'selected':''}>${s==='cobrar'?'🔴 A cobrar':s==='cobrado'?'🟡 Cobrado':'🟢 Recebido'}</option>`).join('');
+
+    return`<div style="background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:12px 13px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+        <div style="width:9px;height:9px;border-radius:50%;background:${cor};flex-shrink:0;"></div>
+        <div style="font-size:.65rem;font-weight:800;color:var(--ink);flex:1;line-height:1.3;">${r.desc}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:.72rem;font-weight:700;color:var(--ink);white-space:nowrap;">${fmt(r.valor)}</div>
+      </div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;">${tags}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <select onchange="mudarStatusRb('${r.id}',this.value,${isAuto})"
+          style="background:${statusBg[r.status]};border:1px solid ${statusBorder[r.status]};border-radius:8px;padding:4px 8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.62rem;font-weight:700;color:${statusTxt[r.status]};outline:none;cursor:pointer;flex-shrink:0;">
+          ${statusOpts}
+        </select>
+        <div style="display:flex;gap:5px;">
+          <button onclick="editarRb('${r.id}',${isAuto})" style="background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:4px 10px;font-size:.62rem;font-weight:700;cursor:pointer;color:var(--ink2);">✏️ Editar</button>
+          <button onclick="excluirRb('${r.id}',${isAuto})" style="background:rgba(229,57,53,.06);border:1px solid rgba(229,57,53,.15);border-radius:7px;padding:4px 9px;font-size:.62rem;font-weight:700;cursor:pointer;color:#E53935;">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function mudarStatusRb(id,status,isAuto){
+  if(isAuto){
+    // promover auto para manual com status novo
+    const auto=getRbTechcard().find(r=>r.id===id);
+    if(!auto) return;
+    if(!S.reembolsos) S.reembolsos=[];
+    S.reembolsos.push({...auto,id:uid(),lancamentoId:auto.lancamentoId,status,auto:false});
+  } else {
+    const r=S.reembolsos.find(x=>x.id===id);
+    if(r) r.status=status;
+  }
+  save();renderReembolsos();
+}
+
+function abrirModalRb(){
+  document.getElementById('rb-form-title').textContent='Novo Reembolso';
+  document.getElementById('rb-edit-id').value='';
+  document.getElementById('rb-desc').value='';
+  document.getElementById('rb-valor').value='';
+  document.getElementById('rb-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('rb-cat').value='';
+  document.getElementById('rb-obs').value='';
+  selStatusRb('cobrar');
+  const el=document.getElementById('modal-rb-form');
+  el.style.display='flex';
+  setTimeout(()=>document.getElementById('rb-desc').focus(),150);
+}
+function fecharModalRb(){
+  document.getElementById('modal-rb-form').style.display='none';
+}
+function selStatusRb(s){
+  document.getElementById('rb-status').value=s;
+  ['cobrar','cobrado','recebido'].forEach(x=>{
+    const btn=document.getElementById('rb-s-'+x);
+    if(!btn) return;
+    if(x===s){
+      const bgs={cobrar:'rgba(229,57,53,.1)',cobrado:'rgba(232,197,71,.15)',recebido:'rgba(34,197,94,.1)'};
+      const bds={cobrar:'rgba(229,57,53,.5)',cobrado:'rgba(232,197,71,.6)',recebido:'rgba(34,197,94,.5)'};
+      const txts={cobrar:'#E53935',cobrado:'#B8860B',recebido:'#16a34a'};
+      btn.style.background=bgs[x];btn.style.borderColor=bds[x];btn.style.color=txts[x];
+    } else {
+      btn.style.background='var(--surface2)';btn.style.borderColor='transparent';btn.style.color='var(--ink3)';
+    }
+  });
+}
+function salvarRb(){
+  const desc=document.getElementById('rb-desc').value.trim();
+  const valor=getMoneyVal(document.getElementById('rb-valor'));
+  const data=document.getElementById('rb-data').value;
+  const cat=document.getElementById('rb-cat').value.trim();
+  const obs=document.getElementById('rb-obs').value.trim();
+  const status=document.getElementById('rb-status').value||'cobrar';
+  if(!desc){toast('Informe a descricao','error');return;}
+  if(!valor||valor<=0){toast('Informe o valor','error');return;}
+  const editId=document.getElementById('rb-edit-id').value;
+  if(!S.reembolsos) S.reembolsos=[];
+  if(editId){
+    const r=S.reembolsos.find(x=>x.id===editId);
+    if(r){r.desc=desc;r.valor=valor;r.data=data;r.categoria=cat;r.obs=obs;r.status=status;}
+  } else {
+    const dataFmt=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
+    S.reembolsos.push({id:uid(),desc,valor,data,dataFmt,categoria:cat,obs,status,auto:false});
+  }
+  save();fecharModalRb();renderReembolsos();toast('Salvo','success');
+}
+function editarRb(id,isAuto){
+  let r;
+  if(isAuto){
+    r=getRbTechcard().find(x=>x.id===id);
+  } else {
+    r=S.reembolsos.find(x=>x.id===id);
+  }
+  if(!r) return;
+  document.getElementById('rb-form-title').textContent='Editar Reembolso';
+  document.getElementById('rb-edit-id').value=isAuto?'':r.id;
+  document.getElementById('rb-desc').value=r.desc;
+  const vf=parseFloat(r.valor).toFixed(2).replace('.',',');
+  const ev=document.getElementById('rb-valor');ev.value=vf;ev.dataset.val=parseFloat(r.valor).toFixed(2);
+  document.getElementById('rb-data').value=r.data||'';
+  document.getElementById('rb-cat').value=r.categoria||'';
+  document.getElementById('rb-obs').value=r.obs||'';
+  selStatusRb(r.status||'cobrar');
+  if(isAuto){
+    // ao salvar vai criar um manual
+    document.getElementById('rb-edit-id').value='AUTO_'+r.lancamentoId;
+  }
+  const el=document.getElementById('modal-rb-form');
+  el.style.display='flex';
+}
+function excluirRb(id,isAuto){
+  if(!confirm('Remover reembolso?')) return;
+  if(isAuto){
+    // criar registro manual com status especial para "ignorar" esse lançamento
+    const auto=getRbTechcard().find(r=>r.id===id);
+    if(!auto) return;
+    if(!S.reembolsos) S.reembolsos=[];
+    S.reembolsos.push({...auto,id:uid(),lancamentoId:auto.lancamentoId,status:'cobrar',auto:false,oculto:true});
+  } else {
+    S.reembolsos=S.reembolsos.filter(r=>r.id!==id);
+  }
+  save();renderReembolsos();toast('Removido');
+}
+
 if('serviceWorker' in navigator){
   const swCode=`
     const CACHE='gestao-v3';
@@ -3247,12 +3473,88 @@ if('serviceWorker' in navigator){
     </div>
 
     <!-- Virar mês -->
+    <button class="menu-mob-item" onclick="abrirReembolsos();closeMobMenu();">
+      <div class="menu-mob-ic" style="background:rgba(229,57,53,.08);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E53935" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/><polyline points="7 13 10 16 17 9"/><line x1="12" y1="6" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="18"/></svg></div>
+      <span class="menu-mob-lbl">Reembolsos</span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+
     <button class="menu-mob-item" onclick="virarMes();closeMobMenu();" style="border-top:2px solid var(--border);margin-top:4px;">
       <div class="menu-mob-ic" style="background:rgba(105,240,174,.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg></div>
       <span class="menu-mob-lbl" style="color:var(--teal-dark);font-weight:800;">Virar Mês</span>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
 
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- JANELA REEMBOLSOS                       -->
+<!-- ═══════════════════════════════════════ -->
+<div id="modal-reembolsos" style="display:none;position:fixed;inset:0;z-index:600;background:var(--bg);overflow-y:auto;">
+
+  <!-- Header -->
+  <div style="background:#0A1F1A;padding:8px 14px;display:flex;align-items:stretch;height:64px;position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.06);">
+    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;width:96px;flex-shrink:0;">
+      <div style="width:7px;height:7px;border-radius:50%;background:#22C55E;margin-top:1px;"></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <svg width="20" height="20" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#rb-g)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="rb-g" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+        <div><div style="font-size:12px;font-weight:800;color:#fff;letter-spacing:-.2px;line-height:1;">Monetra</div><div style="font-size:6px;color:rgba(255,255,255,.28);font-weight:500;line-height:1.4;">Sua vida financeira<br>em equilíbrio.</div></div>
+      </div>
+    </div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase;">Reembolsos</div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;width:76px;flex-shrink:0;">
+      <button onclick="fecharReembolsos()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;line-height:1;">×</button>
+      <div style="font-size:7px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase;" id="rb-mes-lbl"></div>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div style="padding:14px 14px 100px;">
+
+    <!-- Resumo -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="rb-resumo"></div>
+
+    <!-- Botão novo -->
+    <button onclick="abrirModalRb()" style="width:100%;background:var(--teal);border:none;border-radius:12px;padding:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;color:#fff;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 12px rgba(10,92,74,.25);">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Novo Reembolso Manual
+    </button>
+
+    <!-- Lista -->
+    <div id="rb-lista"></div>
+
+  </div>
+</div>
+
+<!-- MODAL NOVO/EDITAR REEMBOLSO -->
+<div id="modal-rb-form" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,41,33,.55);display:none;align-items:flex-end;">
+  <div style="background:var(--surface);border-radius:16px 16px 0 0;width:100%;padding:18px 16px 32px;max-height:90vh;overflow-y:auto;" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <h2 style="font-size:.9rem;font-weight:800;color:var(--ink);" id="rb-form-title">Novo Reembolso</h2>
+      <button onclick="fecharModalRb()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink3);">×</button>
+    </div>
+    <input type="hidden" id="rb-edit-id">
+    <div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input" id="rb-desc" placeholder="Ex: Compra no Mercado Livre..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" inputmode="numeric" class="form-input" id="rb-valor" placeholder="0,00" oninput="maskMoney(this)"></div>
+      <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="rb-data"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Categoria</label><input type="text" class="form-input" id="rb-cat" placeholder="Ex: Eletrônicos, Alimentação..."></div>
+    <div class="form-group"><label class="form-label">Observação <span style="color:var(--ink3);font-weight:400;text-transform:none;font-size:.7rem;">(opcional)</span></label><input type="text" class="form-input" id="rb-obs" placeholder="Detalhe da compra..."></div>
+    <div class="form-group">
+      <label class="form-label">Status</label>
+      <div style="display:flex;gap:7px;margin-top:4px;">
+        <button type="button" id="rb-s-cobrar" onclick="selStatusRb('cobrar')" style="flex:1;border-radius:9px;padding:9px 4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;border:2px solid rgba(229,57,53,.4);background:rgba(229,57,53,.08);color:#E53935;">🔴 A cobrar</button>
+        <button type="button" id="rb-s-cobrado" onclick="selStatusRb('cobrado')" style="flex:1;border-radius:9px;padding:9px 4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;border:2px solid transparent;background:var(--surface2);color:var(--ink3);">🟡 Cobrado</button>
+        <button type="button" id="rb-s-recebido" onclick="selStatusRb('recebido')" style="flex:1;border-radius:9px;padding:9px 4px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:700;cursor:pointer;border:2px solid transparent;background:var(--surface2);color:var(--ink3);">🟢 Recebido</button>
+      </div>
+      <input type="hidden" id="rb-status" value="cobrar">
+    </div>
+    <button onclick="salvarRb()" style="width:100%;background:var(--teal);border:none;border-radius:12px;padding:13px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;font-weight:700;color:#fff;cursor:pointer;margin-top:6px;box-shadow:0 2px 12px rgba(10,92,74,.25);">Salvar</button>
   </div>
 </div>
 
