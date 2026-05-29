@@ -3195,6 +3195,7 @@ function renderReembolsos(){
     const dataFmt=r.dataFmt||(r.data?new Date(r.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'');
     const tags=[
       isAuto?'<span style="font-size:.55rem;font-weight:700;background:rgba(96,144,232,.1);color:#6090e8;border:1px solid rgba(96,144,232,.25);border-radius:5px;padding:2px 7px;">Techcard</span>':'<span style="font-size:.55rem;font-weight:700;background:rgba(160,112,224,.1);color:#a070e0;border:1px solid rgba(160,112,224,.25);border-radius:5px;padding:2px 7px;">Manual</span>',
+      r.cliente?`<span style="font-size:.55rem;font-weight:700;background:rgba(10,92,74,.08);color:var(--teal);border:1px solid rgba(10,92,74,.2);border-radius:5px;padding:2px 7px;">👤 ${r.cliente}</span>`:'',
       r.categoria?`<span style="font-size:.55rem;font-weight:600;color:#7A9E94;background:#F0F5F3;border-radius:5px;padding:2px 7px;">${r.categoria}</span>`:'',
       dataFmt?`<span style="font-size:.55rem;font-weight:600;color:#7A9E94;background:#F0F5F3;border-radius:5px;padding:2px 7px;">${dataFmt}</span>`:'',
     ].filter(Boolean).join('');
@@ -3244,6 +3245,7 @@ function abrirModalRb(){
   document.getElementById('rb-desc').value='';
   document.getElementById('rb-valor').value='';
   document.getElementById('rb-data').value=new Date().toISOString().slice(0,10);
+  document.getElementById('rb-cliente').value='';
   document.getElementById('rb-cat').value='';
   document.getElementById('rb-obs').value='';
   selStatusRb('cobrar');
@@ -3273,6 +3275,7 @@ function salvarRb(){
   const desc=document.getElementById('rb-desc').value.trim();
   const valor=getMoneyVal(document.getElementById('rb-valor'));
   const data=document.getElementById('rb-data').value;
+  const cliente=document.getElementById('rb-cliente').value.trim();
   const cat=document.getElementById('rb-cat').value.trim();
   const obs=document.getElementById('rb-obs').value.trim();
   const status=document.getElementById('rb-status').value||'cobrar';
@@ -3282,10 +3285,10 @@ function salvarRb(){
   if(!S.reembolsos) S.reembolsos=[];
   if(editId){
     const r=S.reembolsos.find(x=>x.id===editId);
-    if(r){r.desc=desc;r.valor=valor;r.data=data;r.categoria=cat;r.obs=obs;r.status=status;}
+    if(r){r.desc=desc;r.valor=valor;r.data=data;r.cliente=cliente;r.categoria=cat;r.obs=obs;r.status=status;}
   } else {
     const dataFmt=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
-    S.reembolsos.push({id:uid(),desc,valor,data,dataFmt,categoria:cat,obs,status,auto:false});
+    S.reembolsos.push({id:uid(),desc,valor,data,dataFmt,cliente,categoria:cat,obs,status,auto:false});
   }
   save();fecharModalRb();renderReembolsos();toast('Salvo','success');
 }
@@ -3303,6 +3306,7 @@ function editarRb(id,isAuto){
   const vf=parseFloat(r.valor).toFixed(2).replace('.',',');
   const ev=document.getElementById('rb-valor');ev.value=vf;ev.dataset.val=parseFloat(r.valor).toFixed(2);
   document.getElementById('rb-data').value=r.data||'';
+  document.getElementById('rb-cliente').value=r.cliente||'';
   document.getElementById('rb-cat').value=r.categoria||'';
   document.getElementById('rb-obs').value=r.obs||'';
   selStatusRb(r.status||'cobrar');
@@ -3543,6 +3547,7 @@ if('serviceWorker' in navigator){
       <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" inputmode="numeric" class="form-input" id="rb-valor" placeholder="0,00" oninput="maskMoney(this)"></div>
       <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="rb-data"></div>
     </div>
+    <div class="form-group"><label class="form-label">Cliente</label><input type="text" class="form-input" id="rb-cliente" placeholder="Ex: João Silva, Empresa ABC..."></div>
     <div class="form-group"><label class="form-label">Categoria</label><input type="text" class="form-input" id="rb-cat" placeholder="Ex: Eletrônicos, Alimentação..."></div>
     <div class="form-group"><label class="form-label">Observação <span style="color:var(--ink3);font-weight:400;text-transform:none;font-size:.7rem;">(opcional)</span></label><input type="text" class="form-input" id="rb-obs" placeholder="Detalhe da compra..."></div>
     <div class="form-group">
