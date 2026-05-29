@@ -3300,11 +3300,18 @@ function salvarRb(){
   if(!valor||valor<=0){toast('Informe o valor','error');return;}
   const editId=document.getElementById('rb-edit-id').value;
   if(!S.reembolsos) S.reembolsos=[];
-  if(editId){
+  const dataFmt=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
+
+  if(editId && editId.startsWith('AUTO_')){
+    // Promover item automático (Techcard) para manual com os dados editados
+    const lancamentoId=editId.replace('AUTO_','');
+    S.reembolsos.push({id:uid(),lancamentoId,desc,valor,data,dataFmt,cliente,categoria:cat,obs,status,auto:false});
+  } else if(editId){
+    // Editar reembolso manual existente
     const r=S.reembolsos.find(x=>x.id===editId);
-    if(r){r.desc=desc;r.valor=valor;r.data=data;r.cliente=cliente;r.categoria=cat;r.obs=obs;r.status=status;}
+    if(r){r.desc=desc;r.valor=valor;r.data=data;r.dataFmt=dataFmt;r.cliente=cliente;r.categoria=cat;r.obs=obs;r.status=status;}
   } else {
-    const dataFmt=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
+    // Novo reembolso manual
     S.reembolsos.push({id:uid(),desc,valor,data,dataFmt,cliente,categoria:cat,obs,status,auto:false});
   }
   save();fecharModalRb();renderReembolsos();toast('Salvo','success');
