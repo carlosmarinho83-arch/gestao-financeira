@@ -3079,34 +3079,12 @@ async function cadastrarBiometria(){
 }
 
 // ==========================================
-// INIT
+// REEMBOLSOS
 // ==========================================
-loadFromFirebase(()=>{
-  // Detecção automática mobile/desktop
-  S.mobileMode = window.innerWidth <= 768;
-  save();
-  document.getElementById('g-mes').value=S.mes;
-  document.getElementById('g-ano').value=S.ano;
-  const mm=document.getElementById('g-mes-mob');
-  const am=document.getElementById('g-ano-mob');
-  if(mm) mm.value=S.mes;
-  if(am) am.value=S.ano;
-  loadSwileInput();
-  if(!S.hasOwnProperty('ocultarFuturos'))S.ocultarFuturos=false;
-  if(!S.reembolsos)S.reembolsos=[];
-  applyMobileMode();
-  applyTema();
-  applyFuturos();
-  showPage('lancamentos');
-  mostrarLock();
-});
-</script>
-<script>
 // Service Worker para PWA
 // ══════════════════════════════════════════
 // REEMBOLSOS
 // ══════════════════════════════════════════
-if(!S.reembolsos) S.reembolsos=[];
 
 function getRbTechcard(){
   // Pegar todos os lancamentos com pessoa Techcard
@@ -3356,25 +3334,29 @@ function excluirRb(id,isAuto){
   save();renderReembolsos();toast('Removido');
 }
 
-if('serviceWorker' in navigator){
-  const swCode=`
-    const CACHE='gestao-v3';
-    self.addEventListener('install',e=>e.waitUntil(
-      caches.open(CACHE).then(c=>c.addAll(['./',location.href]))
-    ));
-    self.addEventListener('fetch',e=>e.respondWith(
-      caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
-        const clone=res.clone();
-        caches.open(CACHE).then(c=>c.put(e.request,clone));
-        return res;
-      }))
-    ));
-  `;
-  const blob=new Blob([swCode],{type:'application/javascript'});
-  const swUrl=URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(()=>{});
-}
+// ==========================================
+// INIT
+// ==========================================
+loadFromFirebase(()=>{
+  // Detectar mobile apenas se nunca definido antes
+  if(!S.hasOwnProperty('mobileMode')) S.mobileMode = window.innerWidth <= 768;
+  if(!S.hasOwnProperty('ocultarFuturos')) S.ocultarFuturos=false;
+  if(!S.reembolsos) S.reembolsos=[];
+  document.getElementById('g-mes').value=S.mes;
+  document.getElementById('g-ano').value=S.ano;
+  const mm=document.getElementById('g-mes-mob');
+  const am=document.getElementById('g-ano-mob');
+  if(mm) mm.value=S.mes;
+  if(am) am.value=S.ano;
+  loadSwileInput();
+  applyMobileMode();
+  applyTema();
+  applyFuturos();
+  showPage('lancamentos');
+  mostrarLock();
+});
 </script>
+
 <!-- ======================================= -->
 <!-- MENU MOBILE — tela cheia estilo Sicoob -->
 <!-- ======================================= -->
@@ -3633,5 +3615,26 @@ if('serviceWorker' in navigator){
   </div>
 </div>
 
+
+<script>
+if('serviceWorker' in navigator){
+  const swCode=`
+    const CACHE='gestao-v3';
+    self.addEventListener('install',e=>e.waitUntil(
+      caches.open(CACHE).then(c=>c.addAll(['./',location.href]))
+    ));
+    self.addEventListener('fetch',e=>e.respondWith(
+      caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{
+        const clone=res.clone();
+        caches.open(CACHE).then(c=>c.put(e.request,clone));
+        return res;
+      }))
+    ));
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const swUrl=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(swUrl).catch(()=>{});
+}
+</script>
 </body>
 </html>
