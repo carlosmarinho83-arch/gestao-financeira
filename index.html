@@ -2642,38 +2642,41 @@ function renderGraficoComparativo(){
   function fmtK(v){return v>=1000?(v/1000).toFixed(1)+'k':fmt(v);}
 
   const alphas=[0.2,0.5,1];
+  const mesShort=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
-  // Barras verticais por pessoa
+  // Legenda meses — linha separada no topo
+  const legendaHTML=`<div style="display:flex;align-items:center;justify-content:flex-end;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:5px;font-size:.52rem;font-weight:600;color:#9a9d94;"><div style="width:14px;height:4px;border-radius:2px;background:rgba(100,100,100,.18);"></div>${mesLabels[0]}</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:.52rem;font-weight:600;color:#9a9d94;"><div style="width:14px;height:4px;border-radius:2px;background:rgba(100,100,100,.42);"></div>${mesLabels[1]}</div>
+    <div style="display:flex;align-items:center;gap:5px;font-size:.52rem;font-weight:800;color:var(--ink);"><div style="width:14px;height:4px;border-radius:2px;background:#0D1108;"></div>${mesLabels[2]} ◀</div>
+  </div>`;
+
+  // Barras verticais por pessoa — valor acima + label mês abaixo
   const pessoasHTML=dados.map((p,pi)=>{
     const bars=p.vals.map((v,mi)=>{
       const pct=maxVal>0?(v/maxVal*100):2;
       const isCur=mi===2;
-      return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
-        <div style="font-size:.42rem;font-weight:${isCur?'700':'600'};color:${isCur?'#4A4D44':'#9a9d94'};white-space:nowrap;">${fmtK(v)}</div>
-        <div style="width:100%;background:var(--surface2);border-radius:3px 3px 0 0;height:80px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:${Math.max(pct,3).toFixed(1)}%;background:${hex2rgba(p.cor,alphas[mi])};border-radius:3px 3px 0 0;transition:height .4s;min-height:3px;${isCur?'outline:1.5px solid '+p.cor+';outline-offset:-1px;':''}"></div>
+      const mesAbrev=mesShort[meses[mi].mes];
+      return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;height:100%;">
+        <div style="font-size:.48rem;font-weight:${isCur?'700':'600'};color:${isCur?'var(--ink)':'#b0b3aa'};white-space:nowrap;margin-bottom:5px;min-height:14px;display:flex;align-items:flex-end;">${v>0?fmtK(v):'–'}</div>
+        <div style="width:100%;background:var(--surface2);border-radius:4px 4px 0 0;flex:1;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:${Math.max(pct,2).toFixed(1)}%;background:${hex2rgba(p.cor,alphas[mi])};border-radius:4px 4px 0 0;transition:height .4s;min-height:3px;${isCur?'outline:1.5px solid '+p.cor+';outline-offset:-1px;':''}"></div>
         </div>
+        <div style="font-size:.46rem;font-weight:${isCur?'800':'500'};color:${isCur?'var(--ink)':'#b0b3aa'};margin-top:5px;white-space:nowrap;">${mesAbrev}</div>
       </div>`;
     }).join('');
-    return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;">
-      <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:80px;">${bars}</div>
-      <div style="margin-top:5px;display:flex;align-items:center;gap:3px;">
-        <div style="width:6px;height:6px;border-radius:50%;background:${p.cor};flex-shrink:0;"></div>
-        <div style="font-size:.5rem;font-weight:700;color:var(--ink);">${p.nome}</div>
+    return`<div style="flex:1;display:flex;flex-direction:column;align-items:center;padding:0 4px;">
+      <div style="width:100%;display:flex;gap:4px;align-items:stretch;height:110px;">${bars}</div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:4px;">
+        <div style="width:7px;height:7px;border-radius:50%;background:${p.cor};flex-shrink:0;"></div>
+        <div style="font-size:.56rem;font-weight:700;color:var(--ink);">${p.nome}</div>
       </div>
     </div>`;
   });
 
   // Separadores entre grupos
-  const sepHTML='<div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;"></div>';
+  const sepHTML='<div style="width:1px;background:var(--border);align-self:stretch;flex-shrink:0;margin:0 2px;"></div>';
   const grafHTML=pessoasHTML.join(sepHTML);
-
-  // Legenda meses
-  const legendaHTML=`<div style="display:flex;justify-content:flex-end;gap:10px;margin-bottom:8px;">
-    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:#9a9d94;font-weight:600;"><div style="width:10px;height:3px;border-radius:2px;background:rgba(100,100,100,.2);"></div>${mesLabels[0]}</div>
-    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:#9a9d94;font-weight:600;"><div style="width:10px;height:3px;border-radius:2px;background:rgba(100,100,100,.45);"></div>${mesLabels[1]}</div>
-    <div style="display:flex;align-items:center;gap:3px;font-size:.48rem;color:var(--ink);font-weight:700;"><div style="width:10px;height:3px;border-radius:2px;background:#0D1108;"></div>${mesLabels[2]} ◀</div>
-  </div>`;
 
   // Cartões com barras horizontais
   const lancsAtual=getLancsMes();
@@ -2684,7 +2687,7 @@ function renderGraficoComparativo(){
     const pct=v/maxCart*100;
     return`<div style="display:flex;align-items:center;gap:8px;">
       <div style="width:6px;height:6px;border-radius:50%;background:${c.cor};flex-shrink:0;"></div>
-      <div style="font-size:.6rem;font-weight:700;color:var(--ink);flex:1;">${c.nome}</div>
+      <div style="font-size:.6rem;font-weight:700;color:var(--ink);flex:1;">${c.tipo==='pix'?'Pix / Débito':c.nome}</div>
       <div style="flex:2;background:var(--surface2);border-radius:3px;height:5px;overflow:hidden;">
         <div style="width:${pct.toFixed(1)}%;height:100%;background:${c.cor};border-radius:3px;"></div>
       </div>
@@ -2721,8 +2724,7 @@ function renderGraficoComparativo(){
         <div style="font-size:.68rem;font-weight:800;color:var(--ink);">Por Pessoa · 3 meses</div>
       </div>
       ${legendaHTML}
-      <div style="display:flex;gap:6px;align-items:stretch;">${grafHTML}</div>
-      <div style="margin-top:8px;padding-top:7px;border-top:1px solid var(--border);font-size:.44rem;color:var(--ink3);text-align:center;">Barra mais escura = mês atual (${mesLabels[2]})</div>
+      <div style="display:flex;gap:0;align-items:stretch;">${grafHTML}</div>
     </div>
     ${cartoesAtivos.length>0?`<div style="background:var(--surface);border-radius:14px;padding:13px;border:1px solid var(--border);">
       <div style="font-size:.68rem;font-weight:800;color:var(--ink);margin-bottom:9px;">Por Cartão · ${mesLabels[2]}</div>
