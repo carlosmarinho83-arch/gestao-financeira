@@ -2957,6 +2957,7 @@ function mostrarLock(){
 }
 
 function fecharLock(){
+  showPage('lancamentos');
   const lock=document.getElementById('lock-screen');
   if(lock) lock.style.display='none';
   const s1=document.getElementById('lock-step1');
