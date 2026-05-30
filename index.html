@@ -996,9 +996,12 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
 // FIREBASE
 // ==========================================
 const firebaseConfig={apiKey:"AIzaSyCLNSdUgaMIzfI2XKk7JYwvh89-c3TXmsc",authDomain:"gestao-financeira-marinho.firebaseapp.com",projectId:"gestao-financeira-marinho",storageBucket:"gestao-financeira-marinho.firebasestorage.app",messagingSenderId:"194826109560",appId:"1:194826109560:web:c992431d2ae2b8bafb638d"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
-const DOC_REF=db.collection('dados').doc('principal');
+let db, DOC_REF;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db=firebase.firestore();
+  DOC_REF=db.collection('dados').doc('principal');
+} catch(e) { db=null; DOC_REF=null; }
 let _syncTimer=null;
 function showSyncStatus(ok,msg=''){const el=document.getElementById('sync-status');if(!el)return;el.style.background=ok?'#22C55E':'#6B7280';el.title=ok?'Salvo':'Offline'+(msg?' – '+msg:'');}
 function migrarDados(){
@@ -1012,12 +1015,19 @@ function migrarDados(){
   if(!S.cartoes.find(c=>c.tipo==='pix'))S.cartoes.push({id:'c4',nome:'Pix / Débito / Dinheiro',donoId:S.pessoas[0]?.id||'p1',tipo:'pix',cor:'#a070e0'});
 }
 function loadFromFirebase(cb){
-  showSyncStatus(false,'Carregando...');
-  DOC_REF.get().then(doc=>{
-    if(doc.exists){S=doc.data();migrarDados();try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}showSyncStatus(true);}
-    else{load();DOC_REF.set(JSON.parse(JSON.stringify(S))).catch(()=>{});showSyncStatus(true);}
+  if(!DOC_REF){ showSyncStatus(false,'Offline'); load(); cb(); return; }
+  try {
+    showSyncStatus(false,'Carregando...');
+    DOC_REF.get().then(doc=>{
+      if(doc.exists){S=doc.data();migrarDados();try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}showSyncStatus(true);}
+      else{load();DOC_REF.set(JSON.parse(JSON.stringify(S))).catch(()=>{});showSyncStatus(true);}
+      cb();
+    }).catch(()=>{showSyncStatus(false,'Offline');load();cb();});
+  } catch(e) {
+    showSyncStatus(false,'Offline');
+    load();
     cb();
-  }).catch(()=>{showSyncStatus(false,'Offline');load();cb();});
+  }
 }
 // ==========================================
 // ESTADO
@@ -2459,7 +2469,7 @@ function toggleMobile(){
 function applyMobileMode(){
   const m=S.mobileMode;
   document.body.classList.toggle('mobile-mode',m);
-  document.getElementById('mobile-lbl').textContent=m?'Desktop':'Mobile';
+  const mobileLbl=document.getElementById('mobile-lbl'); if(mobileLbl) mobileLbl.textContent=m?'Desktop':'Mobile';
   const btnLayout=document.getElementById('btn-layout');
   if(btnLayout)btnLayout.innerHTML=m?'🖥️':'📱';
   const val=getQueilaCfg().swileCredito||'';
@@ -3352,7 +3362,20 @@ loadFromFirebase(()=>{
   applyMobileMode();
   applyTema();
   applyFuturos();
-  showPage('lancamentos');
+  // Forçar renderização da página de lançamentos
+  const pageLanc = document.getElementById('page-lancamentos');
+  if(pageLanc) pageLanc.style.display = '';
+  ['prestacao','relatorio','metas','categorias','cartoes','pessoas','painel'].forEach(x=>{
+    const el=document.getElementById('page-'+x);
+    if(el) el.style.display='none';
+  });
+  renderStats();
+  renderTabela();
+  pagina='lancamentos';
+  const greetEl=document.getElementById('topbar-greeting');
+  if(greetEl) greetEl.textContent='LANÇAMENTOS';
+  const mesEl=document.getElementById('topbar-mes');
+  if(mesEl) mesEl.textContent=getMesLabel();
   mostrarLock();
 });
 </script>
