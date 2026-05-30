@@ -194,8 +194,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .stats-fileira { display:grid; gap:10px; }
 .stat-card {
   background:var(--surface); border-radius:12px; padding:14px 16px;
-  box-shadow:var(--shadow-sm); border:1px solid var(--border);
-  border-left:3px solid var(--teal);
+  box-shadow:var(--shadow-sm); border:none;
   transition:transform .15s, box-shadow .15s;
 }
 .stat-card:hover { transform:translateY(-1px); box-shadow:var(--shadow); }
@@ -471,7 +470,7 @@ body.light-mode { }
 .senha-dot.filled { background:var(--teal); }
 
 /* Dark mode adjustments */
-body.dark-mode .stat-card { background:var(--surface); border-color:var(--border); }
+body.dark-mode .stat-card { background:var(--surface); }
 body.dark-mode .table-wrap { background:var(--surface); }
 body.dark-mode thead th { background:linear-gradient(135deg,#003d33,#005548); }
 body.dark-mode .modal { background:var(--surface); }
