@@ -2955,15 +2955,17 @@ function mostrarLock(){
   // sem senha: entrar direto
   if(!S.senha){ fecharLock(); return; }
   lock.style.display='block';
-  // sempre começa na etapa 1
+  // ir direto para step2 (tela de senha/biometria)
   const s1=document.getElementById('lock-step1');
   const s2=document.getElementById('lock-step2');
-  if(s1) s1.style.display='flex';
-  if(s2) s2.style.display='none';
+  if(s1) s1.style.display='none';
+  if(s2) s2.style.display='flex';
   const erroEl=document.getElementById('lock-erro');
   if(erroEl) erroEl.style.display='none';
   const senhaEl=document.getElementById('lock-senha');
   if(senhaEl) senhaEl.value='';
+  // disparar biometria automaticamente
+  setTimeout(()=>{ desbloquearBiometria(); }, 600);
 }
 
 function fecharLock(){
@@ -3009,8 +3011,6 @@ async function verificarBiometria(){
     if(disponivel && S.bioCredentialId){
       btn.style.display = 'flex';
       status.textContent = 'Biometria disponível';
-      // tentar automaticamente
-      setTimeout(desbloquearBiometria, 500);
     } else if(disponivel && !S.bioCredentialId){
       btn.style.display = 'flex';
       btn.innerHTML = btn.innerHTML.replace('Usar biometria', 'Cadastrar biometria');
