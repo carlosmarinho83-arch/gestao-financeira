@@ -3522,26 +3522,36 @@ if('serviceWorker' in navigator){
 <!-- ═══════════════════════════════════════ -->
 <div id="modal-reembolsos" style="display:none;position:fixed;inset:0;z-index:600;background:var(--bg);overflow-y:auto;">
 
-  <!-- Header -->
-  <div style="background:#0A1F1A;padding:8px 14px;display:flex;align-items:stretch;height:64px;position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.06);">
-    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;width:96px;flex-shrink:0;">
-      <div style="width:7px;height:7px;border-radius:50%;background:#22C55E;margin-top:1px;"></div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <svg width="20" height="20" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#rb-g)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="rb-g" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
-        <div><div style="font-size:12px;font-weight:800;color:#fff;letter-spacing:-.2px;line-height:1;">Monetra</div><div style="font-size:6px;color:rgba(255,255,255,.28);font-weight:500;line-height:1.4;">Sua vida financeira<br>em equilíbrio.</div></div>
+  <!-- Topbar padrao -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div id="sync-status-rb" style="width:7px;height:7px;border-radius:50%;background:#22C55E;margin-top:1px;"></div>
+      <div class="tb-logo-row">
+        <svg width="22" height="22" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#rb-g)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="rb-g" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+        <div>
+          <div class="tb-logo-name">Monetra</div>
+          <div class="tb-logo-slogan">Sua vida financeira<br>em equilíbrio.</div>
+        </div>
       </div>
     </div>
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
-      <div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.1em;text-transform:uppercase;">Reembolsos</div>
+    <div class="tb-center">
+      <div class="tb-page-name">REEMBOLSOS</div>
     </div>
-    <div style="display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;width:76px;flex-shrink:0;">
-      <button onclick="fecharReembolsos()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:14px;line-height:1;">×</button>
-      <div style="font-size:7px;font-weight:600;color:rgba(255,255,255,.3);letter-spacing:.06em;text-transform:uppercase;" id="rb-mes-lbl"></div>
+    <div class="tb-right">
+      <div class="tb-icon-row">
+        <button onclick="toggleMobile()" title="Alternar layout" class="tb-icon-btn">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </button>
+        <button onclick="toggleTema()" title="Tema claro/escuro" class="tb-icon-btn">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg>
+        </button>
+      </div>
+      <div class="tb-mes" id="rb-mes-lbl"></div>
     </div>
   </div>
 
-  <!-- Conteúdo -->
-  <div style="padding:14px 14px 100px;">
+  <!-- Conteudo -->
+  <div style="padding:14px 14px 80px;">
 
     <!-- Resumo -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="rb-resumo"></div>
@@ -3564,6 +3574,29 @@ if('serviceWorker' in navigator){
     <div id="rb-lista"></div>
 
   </div>
+
+  <!-- Bottom nav igual ao padrao -->
+  <nav style="position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--surface);border-top:1px solid var(--border);z-index:601;display:flex;align-items:center;justify-content:space-around;padding:0 8px;box-shadow:0 -2px 16px rgba(0,105,92,.08);">
+    <button onclick="fecharReembolsos();showPage('lancamentos');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;-webkit-tap-highlight-color:transparent;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      Lançamentos
+    </button>
+    <button onclick="fecharReembolsos();showPage('prestacao');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;-webkit-tap-highlight-color:transparent;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>
+      Fechamento
+    </button>
+    <button onclick="abrirModalRb()" style="width:56px;height:56px;border-radius:50%;background:var(--teal);border:3px solid var(--surface);box-shadow:0 6px 20px rgba(10,92,74,.3);display:flex;align-items:center;justify-content:center;margin-top:-20px;flex-shrink:0;cursor:pointer;-webkit-tap-highlight-color:transparent;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </button>
+    <button onclick="fecharReembolsos();showPage('relatorio');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;-webkit-tap-highlight-color:transparent;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Evolução
+    </button>
+    <button onclick="fecharReembolsos();toggleMobMenu();" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--teal);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:700;min-width:44px;padding:6px 8px;-webkit-tap-highlight-color:transparent;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+      Menu
+    </button>
+  </nav>
 </div>
 
 <!-- MODAL NOVO/EDITAR REEMBOLSO -->
