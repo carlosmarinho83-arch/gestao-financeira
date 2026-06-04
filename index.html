@@ -276,7 +276,8 @@ body.ocultar-futuros .lanc-futuro-mob { display:none!important; }
 .perc-wrap input { border:none; background:transparent; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:10px 6px 10px 14px; width:60px; }
 .perc-wrap span { padding:10px 14px 10px 4px; font-size:.78rem; color:var(--ink3); }
 .info-tip { background:rgba(0,137,123,.08); border:1px solid rgba(0,137,123,.2); border-radius:8px; padding:8px 12px; font-size:.78rem; color:var(--ink2); margin-bottom:12px; }
-.parc-row { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--surface2); border-radius:10px; border:1px solid var(--border); }
+.parc-row { display:flex; align-items:center; gap:8px; padding:10px 14px; background:var(--surface2); border-radius:10px; border:1px solid var(--border); opacity:.4; pointer-events:none; }
+.parc-row.show { opacity:1; pointer-events:all; }
 .parc-row input { background:var(--surface); border:1.5px solid var(--border); border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; font-weight:700; color:var(--ink); outline:none; padding:6px 10px; width:64px; text-align:center; }
 .parc-row input:focus { border-color:var(--teal); }
 .parc-row span { color:var(--ink3); font-size:.84rem; }
@@ -1198,6 +1199,7 @@ function openModalLanc(editId=null){
       document.getElementById('l-cartao').value=l.cartaoId;
       document.getElementById('l-cat').value=l.categoria||'';
       document.getElementById('l-parcelado').checked=l.parcelado;
+      document.getElementById('parc-row').classList.toggle('show', !!l.parcelado);
       document.getElementById('l-pa').value=l.pa||1;
       document.getElementById('l-pt').value=l.pt||2;
       document.getElementById('l-recorrente').checked=l.recorrente||false;
@@ -1213,6 +1215,7 @@ function openModalLanc(editId=null){
     document.getElementById('l-valor').value='';
     document.getElementById('l-data').value=new Date().toISOString().slice(0,10);
     document.getElementById('l-parcelado').checked=false;
+    document.getElementById('parc-row').classList.remove('show');
     document.getElementById('l-pa').value=1;
     document.getElementById('l-pt').value=2;
     document.getElementById('l-recorrente').checked=false;
