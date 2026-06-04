@@ -614,6 +614,11 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
           </svg>
           <span id="fut-label" style="line-height:1;">Lançamentos futuros</span>
         </button>
+        <button id="btn-conferidos" onclick="toggleOcultarConferidos()" style="display:flex;align-items:center;gap:6px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="lbl-conf-filter" style="line-height:1;">Ocultar conferidos</span>
+          <span id="badge-conf" style="background:rgba(34,197,94,.12);color:#16a34a;border-radius:8px;padding:1px 8px;font-size:.65rem;font-weight:800;border:1px solid rgba(34,197,94,.25);display:none;"></span>
+        </button>
       </div>
       <div class="table-wrap">
         <table><thead><tr>
@@ -1410,6 +1415,9 @@ function renderTabela(){
   if(S.mobileMode){renderMobCards();}
   const tbody=document.getElementById('tbody');
   if(lancs.length===0){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="ei">💳</div><p>Nenhum lançamento encontrado</p></div></td></tr>`;return;}
+  // filtro conferidos desktop
+  const ocConfD=S.ocultarConferidos||false;
+  if(ocConfD) lancs=lancs.filter(l=>!(S.conferidos||[]).includes(l.id));
   tbody.innerHTML=lancs.map(l=>{
     const futuro=isFuturo(l);
     const p=getPessoa(l.pessoaId);
@@ -2378,6 +2386,13 @@ function renderMobCards(){
     mobDiv.innerHTML='<div class="empty-state"><div class="ei">💳</div><p>Nenhum lançamento</p></div>';
     return;
   }
+  // filtro conferidos
+  const ocConf=S.ocultarConferidos||false;
+  if(ocConf) lancs=lancs.filter(l=>!(S.conferidos||[]).includes(l.id));
+  const totalConf=(S.conferidos||[]).filter(id=>getLancsMes().some(l=>l.id===id)).length;
+  const badgeEl=document.getElementById('badge-conf');
+  if(badgeEl){badgeEl.textContent=totalConf+' conferido'+(totalConf!==1?'s':'');badgeEl.style.display=totalConf>0?'':'none';}
+  if(lancs.length===0&&ocConf){mobDiv.innerHTML='<div class="empty-state"><div class="ei">✅</div><p>Todos conferidos!</p></div>';return;}
   mobDiv.innerHTML=lancs.map(l=>{
     const p=getPessoa(l.pessoaId);
     const c=getCartao(l.cartaoId);
@@ -2387,10 +2402,11 @@ function renderMobCards(){
     const rec=l.recorrente?'↻ ':'';
     const obs=l.obs?`<span onclick="mostrarObs(event,'${l.obs.replace(/'/g,"\\'")}');" style="margin-left:4px;cursor:pointer;font-size:.85rem;color:var(--ink3);">💬</span>`:'';
     const fut2=isFuturo(l);
-    return`<div class="${fut2?'lanc-futuro lanc-futuro-mob':''}"><div class="mob-card">
+    const conf=(S.conferidos||[]).includes(l.id);
+    return`<div class="${fut2?'lanc-futuro lanc-futuro-mob':''}"><div class="mob-card" style="${conf?'opacity:.6;':''}">
       <div class="mob-card-dot" style="background:${cor}"></div>
       <div class="mob-card-body">
-        <div class="mob-card-desc">${rec}${l.desc}${obs}</div>
+        <div class="mob-card-desc">${rec}${l.desc}${obs}${conf?'<span style="margin-left:5px;font-size:.5rem;font-weight:800;color:#22C55E;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:5px;padding:1px 6px;">✓ ok</span>':''}</div>
         <div class="mob-card-meta">
           <span>${p?p.nome:'?'}</span>
           ${c?`<span>${c.nome}</span>`:''}
@@ -2401,7 +2417,11 @@ function renderMobCards(){
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="mob-card-val">${fmt(l.valor)}</div>
-        <div class="mob-card-actions">
+        <div class="mob-card-actions" style="align-items:center;">
+          <button onclick="toggleConferido('${l.id}')" title="${conf?'Desmarcar':'Marcar como conferido'}"
+            style="width:22px;height:22px;border-radius:50%;border:2px solid ${conf?'#22C55E':'#d0d5d2'};background:${conf?'#22C55E':'transparent'};display:flex;align-items:center;justify-content:center;padding:0;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="opacity:${conf?1:0.3}"><polyline points="2 6 5 9 10 3"/></svg>
+          </button>
           <button onclick="openModalLanc('${l.id}')">✏️</button>
           <button onclick="delLanc('${l.id}')" style="color:var(--red)">🗑</button>
         </div>
