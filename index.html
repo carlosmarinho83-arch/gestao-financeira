@@ -614,10 +614,6 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
           </svg>
           <span id="fut-label" style="line-height:1;">Lançamentos futuros</span>
         </button>
-        <button id="btn-conferidos" onclick="toggleOcultarConferidos()" style="display:flex;align-items:center;gap:6px;">
-          <span id="lbl-conf-filter" style="line-height:1;">Ocultar conferidos</span>
-          <span id="badge-conf" style="background:rgba(34,197,94,.12);color:#16a34a;border-radius:8px;padding:1px 8px;font-size:.65rem;font-weight:800;border:1px solid rgba(34,197,94,.25);display:none;"></span>
-        </button>
       </div>
       <div class="table-wrap">
         <table><thead><tr>
@@ -1415,8 +1411,6 @@ function renderTabela(){
   const tbody=document.getElementById('tbody');
   if(lancs.length===0){tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="ei">💳</div><p>Nenhum lançamento encontrado</p></div></td></tr>`;return;}
   // filtro conferidos desktop
-  const ocConfD=S.ocultarConferidos||false;
-  if(ocConfD) lancs=lancs.filter(l=>!(S.conferidos||[]).includes(l.id));
   tbody.innerHTML=lancs.map(l=>{
     const futuro=isFuturo(l);
     const p=getPessoa(l.pessoaId);
@@ -2385,13 +2379,7 @@ function renderMobCards(){
     mobDiv.innerHTML='<div class="empty-state"><div class="ei">💳</div><p>Nenhum lançamento</p></div>';
     return;
   }
-  // filtro conferidos
-  const ocConf=S.ocultarConferidos||false;
-  if(ocConf) lancs=lancs.filter(l=>!(S.conferidos||[]).includes(l.id));
-  const totalConf=(S.conferidos||[]).filter(id=>getLancsMes().some(l=>l.id===id)).length;
-  const badgeEl=document.getElementById('badge-conf');
-  if(badgeEl){badgeEl.textContent=totalConf+' conferido'+(totalConf!==1?'s':'');badgeEl.style.display=totalConf>0?'':'none';}
-  if(lancs.length===0&&ocConf){mobDiv.innerHTML='<div class="empty-state"><div class="ei">✅</div><p>Todos conferidos!</p></div>';return;}
+
   mobDiv.innerHTML=lancs.map(l=>{
     const p=getPessoa(l.pessoaId);
     const c=getCartao(l.cartaoId);
