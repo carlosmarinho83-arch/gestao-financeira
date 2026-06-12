@@ -2398,11 +2398,12 @@ function renderMobCards(){
     const c=getCartao(l.cartaoId);
     const cor=p?p.cor:'#666';
     const dataFmt=l.data?new Date(l.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
-    const parc=l.parcelado?` ${String(l.pa).padStart(2,'0')}/${String(l.pt).padStart(2,'0')}`:'';
+    const parc=l.parcelado?`<span style="color:var(--teal);font-weight:700;background:rgba(10,92,74,.08);border-radius:5px;padding:1px 5px;font-size:.62rem;">📦 ${String(l.pa).padStart(2,'0')}/${String(l.pt).padStart(2,'0')}</span>`:'';
     const rec=l.recorrente?'↻ ':'';
     const obs=l.obs?`<span onclick="mostrarObs(event,'${l.obs.replace(/'/g,"\\'")}');" style="margin-left:4px;cursor:pointer;font-size:.85rem;color:var(--ink3);">💬</span>`:'';
     const fut2=isFuturo(l);
     const conf=(S.conferidos||[]).includes(l.id);
+    const dataTag=dataFmt?`<span style="color:var(--ink3);font-size:.65rem;">📅 ${dataFmt}</span>`:'';
     return`<div class="${fut2?'lanc-futuro lanc-futuro-mob':''}"><div class="mob-card" style="${conf?'opacity:.6;':''}">
       <div class="mob-card-dot" style="background:${cor}"></div>
       <div class="mob-card-body">
@@ -2411,8 +2412,8 @@ function renderMobCards(){
           <span>${p?p.nome:'?'}</span>
           ${c?`<span>${c.nome}</span>`:''}
           ${l.categoria?`<span>${l.categoria}</span>`:''}
-          ${parc?`<span>${parc}</span>`:''}
-          ${dataFmt?`<span>${dataFmt}</span>`:''}
+          ${parc}
+          ${dataTag}
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
@@ -3544,6 +3545,48 @@ loadFromFirebase(()=>{
 </div>
 
 
+<!-- ======================================= -->
+<!-- JANELA NOTAS & MELHORIAS               -->
+<!-- ======================================= -->
+<div id="modal-notas" style="display:none;position:fixed;inset:0;z-index:600;background:var(--bg);overflow-y:auto;">
+  <div class="topbar">
+    <div class="tb-left">
+      <div style="width:7px;height:7px;border-radius:50%;background:#22C55E;margin-top:1px;"></div>
+      <div class="tb-logo-row">
+        <svg width="22" height="22" viewBox="0 0 96 96" fill="none"><path d="M22 70 L22 30 L48 56 L74 30 L74 70" stroke="url(#nt-g)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/><defs><linearGradient id="nt-g" x1="22" y1="30" x2="74" y2="70" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#22C55E"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs></svg>
+        <div><div class="tb-logo-name">Monetra</div><div class="tb-logo-slogan">Sua vida financeira<br>em equilíbrio.</div></div>
+      </div>
+    </div>
+    <div class="tb-center"><div class="tb-page-name">NOTAS</div></div>
+    <div class="tb-right">
+      <div class="tb-icon-row">
+        <button onclick="toggleMobile()" class="tb-icon-btn"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></button>
+        <button onclick="toggleTema()" class="tb-icon-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/></svg></button>
+      </div>
+      <div class="tb-mes"></div>
+    </div>
+  </div>
+  <div style="padding:14px 14px 100px;">
+    <div style="background:rgba(202,138,4,.08);border:1px solid rgba(202,138,4,.25);border-radius:12px;padding:12px 14px;margin-bottom:14px;font-size:.72rem;color:#92400e;line-height:1.5;">
+      📋 Anote aqui sugestões e melhorias pendentes para o app.
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <input type="text" id="nota-input" placeholder="Digite uma nota ou melhoria..."
+        style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;"
+        onkeydown="if(event.key==='Enter')salvarNota()">
+      <button onclick="salvarNota()" style="background:var(--teal);border:none;border-radius:10px;padding:10px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;color:#fff;cursor:pointer;">+ Add</button>
+    </div>
+    <div id="notas-lista"></div>
+  </div>
+  <nav style="position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--surface);border-top:1px solid var(--border);z-index:601;display:flex;align-items:center;justify-content:space-around;padding:0 8px;">
+    <button onclick="fecharNotas();showPage('lancamentos');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/></svg>Lancamentos</button>
+    <button onclick="fecharNotas();showPage('prestacao');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 11l3 3L22 4"/></svg>Fechamento</button>
+    <button onclick="salvarNota()" style="width:56px;height:56px;border-radius:50%;background:var(--teal);border:3px solid var(--surface);box-shadow:0 6px 20px rgba(10,92,74,.3);display:flex;align-items:center;justify-content:center;margin-top:-20px;flex-shrink:0;cursor:pointer;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    <button onclick="fecharNotas();showPage('relatorio');" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:600;min-width:44px;padding:6px 8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Evolucao</button>
+    <button onclick="fecharNotas();toggleMobMenu();" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:var(--teal);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:.58rem;font-weight:700;min-width:44px;padding:6px 8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>Menu</button>
+  </nav>
+</div>
+
 <!-- ═══════════════════════════════════════ -->
 <!-- JANELA REEMBOLSOS                       -->
 <!-- ═══════════════════════════════════════ -->
@@ -3661,6 +3704,58 @@ loadFromFirebase(()=>{
 
 
 <script>
+// ==========================================
+// NOTAS & MELHORIAS
+// ==========================================
+function abrirNotas(){
+  if(!S.notas) S.notas=[];
+  document.getElementById('modal-notas').style.display='block';
+  document.getElementById('nota-input').value='';
+  renderNotas();
+}
+function fecharNotas(){
+  document.getElementById('modal-notas').style.display='none';
+}
+function salvarNota(){
+  const inp=document.getElementById('nota-input');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  if(!S.notas) S.notas=[];
+  S.notas.unshift({id:uid(),texto:txt,data:new Date().toLocaleDateString('pt-BR'),feita:false});
+  save();
+  inp.value='';
+  renderNotas();
+  toast('Nota salva','success');
+}
+function toggleNota(id){
+  const n=S.notas.find(x=>x.id===id);
+  if(n) n.feita=!n.feita;
+  save();renderNotas();
+}
+function delNota(id){
+  S.notas=S.notas.filter(x=>x.id!==id);
+  save();renderNotas();
+}
+function renderNotas(){
+  const el=document.getElementById('notas-lista');
+  if(!el) return;
+  if(!S.notas||!S.notas.length){
+    el.innerHTML='<div class="empty-state"><div class="ei">📋</div><p>Nenhuma nota ainda.<br>Adicione melhorias ou lembretes acima.</p></div>';
+    return;
+  }
+  el.innerHTML=S.notas.map(n=>`
+    <div style="background:var(--surface);border-radius:12px;border:1px solid var(--border);padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;${n.feita?'opacity:.5;':''}" >
+      <div onclick="toggleNota('${n.id}')" style="width:22px;height:22px;border-radius:50%;border:2px solid ${n.feita?'#22C55E':'#ccc'};background:${n.feita?'#22C55E':'transparent'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-top:1px;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:${n.feita?1:0.2}"><polyline points="2 6 5 9 10 3"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:.78rem;font-weight:${n.feita?'500':'700'};color:var(--ink);text-decoration:${n.feita?'line-through':'none'};line-height:1.4;">${n.texto}</div>
+        <div style="font-size:.6rem;color:var(--ink3);margin-top:3px;">${n.data}</div>
+      </div>
+      <button onclick="delNota('${n.id}')" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.9rem;padding:2px;">🗑</button>
+    </div>`).join('');
+}
+
 if('serviceWorker' in navigator){
   const swCode=`
     const CACHE='gestao-v3';
