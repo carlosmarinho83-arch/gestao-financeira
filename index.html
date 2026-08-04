@@ -675,7 +675,7 @@ body.dark-mode .res-card { background:linear-gradient(135deg,#002a22,#003d33); }
     <input type="hidden" id="l-id">
     <div class="form-group"><label class="form-label">Descrição</label><input type="text" class="form-input" id="l-desc" placeholder="Ex: Supermercado Boa Vista..."></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" inputmode="numeric" class="form-input" id="l-valor" placeholder="0,00" oninput="maskMoney(this);atualizarTotalDivisao()"></div>
+      <div class="form-group"><label class="form-label">Valor (R$)</label><input type="text" inputmode="decimal" class="form-input" id="l-valor" placeholder="0,00 (ou -0,00 para estorno)" oninput="maskMoney(this);atualizarTotalDivisao()"></div>
       <div class="form-group"><label class="form-label">Data</label><input type="date" class="form-input" id="l-data"></div>
     </div>
     <div class="form-row">
@@ -1300,7 +1300,7 @@ function salvarLanc(){
   const obs=document.getElementById('l-obs').value.trim()||null;
   const digitos=document.getElementById('l-digitos')?document.getElementById('l-digitos').value.replace(/\D/g,'').slice(0,4)||null:null;
   if(!desc){toast('Informe a descrição','error');return;}
-  if(!valor||valor<=0){toast('Informe o valor','error');return;}
+  if(!valor||valor===0){toast('Informe o valor','error');return;}
   const editId=document.getElementById('l-id').value;
     // Coletar divisões
   const divisoes=[];
@@ -2426,7 +2426,7 @@ function renderMobCards(){
           <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="${conf?'#fff':'#bbb'}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
         </div>
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-          <div class="mob-card-val">${fmt(l.valor)}</div>
+          <div class="mob-card-val" style="${l.valor<0?'color:var(--red);':''}">${l.valor<0?'- ':''} ${fmt(Math.abs(l.valor))}</div>
           <div class="mob-card-actions">
             <button onclick="openModalLanc('${l.id}')">✏️</button>
             <button onclick="delLanc('${l.id}')" style="color:var(--red)">🗑</button>
@@ -2961,16 +2961,18 @@ function atualizarTotalDivisao(){
 }
 
 function maskMoney(input){
-  let v=input.value.replace(/\D/g,'');
-  if(!v){input.value='';return;}
+  let raw=input.value;
+  const neg=raw.trim().startsWith('-');
+  let v=raw.replace(/[^\d]/g,'');
+  if(!v){input.value=neg?'-':'';return;}
   v=(parseInt(v)/100).toFixed(2);
-  input.value=v.replace('.',',');
-  // manter valor numérico em dataset
-  input.dataset.val=(parseInt(input.value.replace(/\D/g,''))/100).toFixed(2);
+  input.value=(neg?'-':'')+v.replace('.',',');
+  input.dataset.val=(neg?-1:1)*(parseInt(v.replace(/[^\d]/g,''))/100);
 }
 function getMoneyVal(input){
-  if(input.dataset.val) return parseFloat(input.dataset.val)||0;
-  return parseFloat(input.value.replace(',','.'))||0;
+  if(input.dataset.val!==undefined && input.dataset.val!=='') return parseFloat(input.dataset.val)||0;
+  const raw=input.value.replace(/[^\d,.-]/g,'').replace(',','.');
+  return parseFloat(raw)||0;
 }
 // ==========================================
 // BLOQUEIO / DESBLOQUEIO
@@ -3312,7 +3314,7 @@ function salvarRb(){
   const obs=document.getElementById('rb-obs').value.trim();
   const status=document.getElementById('rb-status').value||'cobrar';
   if(!desc){toast('Informe a descricao','error');return;}
-  if(!valor||valor<=0){toast('Informe o valor','error');return;}
+  if(!valor||valor===0){toast('Informe o valor','error');return;}
   const editId=document.getElementById('rb-edit-id').value;
   if(!S.reembolsos) S.reembolsos=[];
   const dataFmt=data?new Date(data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit'}):'';
@@ -3378,6 +3380,9 @@ loadFromFirebase(()=>{
   if(!S.hasOwnProperty('mobileMode')) S.mobileMode = window.innerWidth <= 768;
   if(!S.hasOwnProperty('ocultarFuturos')) S.ocultarFuturos=false;
   if(!S.reembolsos) S.reembolsos=[];
+  // Sempre voltar para o mês corrente ao abrir
+  S.mes = new Date().getMonth();
+  S.ano = new Date().getFullYear();
   document.getElementById('g-mes').value=S.mes;
   document.getElementById('g-ano').value=S.ano;
   const mm=document.getElementById('g-mes-mob');
